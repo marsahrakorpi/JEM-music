@@ -95,7 +95,7 @@ public class DBConnector {
 	public String queryBuilder (String table, Map<String, String[]> params) {
 
 		String query = "SELECT ";
-		String columns = "", conditions = "", order = "", limit = "50", leftJoin = "";
+		String columns = "", conditions = "", order = "", limit = "", leftJoin = "";
 		String[] sideload = {};
 
 		
@@ -122,10 +122,10 @@ public class DBConnector {
 			
 			switch(table) {
 				case "Track":
-					leftJoin += "Album ON Album.AlbumId = Track.AlbumId LEFT JOIN Artist ON Album.ArtistId = Artist.ArtistId";
+					leftJoin += "Album ON Album.AlbumId = Track.AlbumId LEFT JOIN Artist ON Album.ArtistId = Artist.ArtistId LEFT JOIN Genre ON Track.GenreId = Genre.GenreId";
 					break;
 				case "Album":
-					leftJoin += "Track ON Album.AlbumId = Track.AlbumId LEFT JOIN Artist ON Artist.ArtistId = Album.ArtistId";
+					leftJoin += "Track ON Album.AlbumId = Track.AlbumId LEFT JOIN Artist ON Artist.ArtistId = Album.ArtistId LEFT JOIN Genre ON Track.GenreId = Genre.GenreId";
 				default: 
 					break;
 			};
@@ -137,7 +137,9 @@ public class DBConnector {
 			columns = "*"; //select all if no columns given
 		}
 
-		
+		if(limit==null || limit=="" || limit == "0") {
+			limit="999999999";
+		}
 		
 		query += columns;
 		query += " FROM "+table;

@@ -1,7 +1,7 @@
 import DS from 'ember-data';
 
 export default DS.Model.extend({
-    
+
     Track_Bytes: DS.attr(),
     Track_Composer: DS.attr(),
     Track_GenreId: DS.attr(),
@@ -18,5 +18,6 @@ export default DS.Model.extend({
     Album_Title: DS.attr(),
     Artist_ArtistId: DS.attr(),
     Artist_Name: DS.attr(),
+    Genre_Name: DS.attr(),
 
 });

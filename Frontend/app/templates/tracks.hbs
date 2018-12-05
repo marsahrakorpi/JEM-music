@@ -1,13 +1,10 @@
 
-<div class="container">
-    {{log model}}
-{{#each model as |m|}}
-    <div class="row">
-    {{m.id}}
-    {{m.Track_Name}}
-    {{m.Track_Composer}}
-    </div>
-{{/each}}
-{{models-table data=model columns=columns}}
+<h1>Track List</h1>
+<div class="container-fluid">
+    {{models-table 
+    data=model 
+    columns=columns
+    themeInstance=themeInstance
+    showGlobalFilter=false}}
 </div>>
 

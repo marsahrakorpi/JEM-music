@@ -1,0 +1,13 @@
+
+<div class="container">
+    {{log model}}
+{{#each model as |m|}}
+    <div class="row">
+    {{m.id}}
+    {{m.Track_Name}}
+    {{m.Track_Composer}}
+    </div>
+{{/each}}
+{{models-table data=model columns=columns}}
+</div>>
+

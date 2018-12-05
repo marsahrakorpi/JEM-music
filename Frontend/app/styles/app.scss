@@ -1,2 +1,46 @@
 
 @import "ember-bootstrap/bootstrap";
+
+.index-main-img{
+    background: url("../../concert-main.jpg");
+    position: relative;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    min-height: 100vh;
+}
+
+.JEM-wrapper{
+    margin-left: 5%;
+    h1{
+        font-size: 8em;
+        display: inline;
+    };
+    .java{
+        color:red;
+        display: inline;
+    };
+    .ember{
+        color: orange;
+        display: inline;
+    };
+    .mysql{
+        color:blue;
+        display: inline;
+    };
+}
+
+.route-selector{
+    text-align: center;
+    min-height: 400px;
+    position: absolute;
+
+    top: 60vh;
+    left: 25vw;
+    .col-sm{
+        opacity: 1;
+        border: 1px solid black;
+        margin: 2%;
+    }
+}

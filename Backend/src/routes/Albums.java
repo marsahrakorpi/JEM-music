@@ -1,9 +1,7 @@
-package engine;
+package routes;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Iterator;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,20 +9,21 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
+import engine.DBConnector;
+
 /**
- * Servlet implementation class DatabaseConnector
+ * Servlet implementation class Albums
  */
-@WebServlet("/DatabaseQuery/*")
-public class DatabaseQuery extends HttpServlet {
+@WebServlet("/albums")
+public class Albums extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public DatabaseQuery() {
+    public Albums() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -33,29 +32,19 @@ public class DatabaseQuery extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("application/json");
+		JSONObject res = new JSONObject();
 		PrintWriter out = response.getWriter();
-
-		String path = "";
 		
-		try {
-			path = request.getPathInfo().substring(1).toLowerCase();
-		} catch (NullPointerException e) {
-			path = "";
+		DBConnector db = new DBConnector();
+		String sql = "";
+		
+		if(request.getParameterMap() != null) {
+			sql = db.queryBuilder("Album", request.getParameterMap());
 		}
 		
-		switch (path) {
-			case "":
-				out.print("No route or table found for query");
-				break;
-			case "testconnection":
-				DBConnector db = new DBConnector();
-				db.testConnection("Track");	
-				break;
-			default:
-				out.print("DatabaseQuery class");
-		};
-
+		res = db.queryDB(sql, "Album");
+		
+		out.print(res);
 	}
 
 	/**
@@ -66,5 +55,4 @@ public class DatabaseQuery extends HttpServlet {
 		doGet(request, response);
 	}
 
-	
 }

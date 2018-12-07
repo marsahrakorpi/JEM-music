@@ -10,7 +10,8 @@ export default Component.extend({
       this._super(...arguments);
       this.columns = [
         {propertyName: 'id'},
-        {propertyName: 'name'}
+        {propertyName: 'name'},
+        {component: 'music-preview'},
       ]
     }
 

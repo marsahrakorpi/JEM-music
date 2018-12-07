@@ -35,12 +35,12 @@ export default Service.extend({
         
     },
 
-    getTrackSingle(searchTerm){
+    getTrackSingle(searchTerm, album){
 
         let accessToken = this.get('access_token').responseText;
 
         return $.ajax({
-            url: "https://api.spotify.com/v1/search?q="+searchTerm+"&type=track&offset=0&limit=1",
+            url: "https://api.spotify.com/v1/search?q="+searchTerm+"&type=track&offset=0&limit=20",
             method: "GET",
             headers: {
                 "Authorization": "Bearer "+accessToken

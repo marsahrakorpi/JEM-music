@@ -41,6 +41,11 @@ public class Artists extends HttpServlet {
 		
 		res = db.queryDB(sql, "Artist");
 		
+	    response.addHeader("Access-Control-Allow-Origin", "*");
+	    response.addHeader("Access-Control-Allow-Methods", "GET, PUT, POST, OPTIONS, DELETE");
+	    response.addHeader("Access-Control-Allow-Headers", "Content-Type");
+	    response.addHeader("Access-Control-Max-Age", "86400");
+		
 		out.print(res);
 	}
 

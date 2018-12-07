@@ -40,7 +40,10 @@ public class Genres extends HttpServlet {
 		String sql = "SELECT * FROM Genre";
 		
 		res = db.queryDB(sql, "Genre");
-		
+	    response.addHeader("Access-Control-Allow-Origin", "*");
+	    response.addHeader("Access-Control-Allow-Methods", "GET, PUT, POST, OPTIONS, DELETE");
+	    response.addHeader("Access-Control-Allow-Headers", "Content-Type");
+	    response.addHeader("Access-Control-Max-Age", "86400");
 		out.print(res);
 	}
 

@@ -55,6 +55,10 @@ public class Tracks extends HttpServlet {
 		
 		res = db.queryDB(sql, "Track");
 		response.setContentType("application/json");
+	    response.addHeader("Access-Control-Allow-Origin", "*");
+	    response.addHeader("Access-Control-Allow-Methods", "GET, PUT, POST, OPTIONS, DELETE");
+	    response.addHeader("Access-Control-Allow-Headers", "Content-Type");
+	    response.addHeader("Access-Control-Max-Age", "86400");
 		out.print(res);
 	}
 

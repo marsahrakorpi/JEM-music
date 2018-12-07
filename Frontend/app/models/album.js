@@ -5,7 +5,5 @@ export default DS.Model.extend({
     //artistId: DS.belongsTo('artist'),
     name: DS.attr('string'),
     tracks: DS.hasMany('track'),
-    idNumeric: computed('id', function () {
-        return parseInt(this.get('id'), 10);
-      })
+
 });

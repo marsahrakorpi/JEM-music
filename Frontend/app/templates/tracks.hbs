@@ -1,6 +1,8 @@
 
 <h1 {{action "transitionTo"}}>GO BACK HOME</h1>
-
+{{#if error}}
+    <h3 style="color:red">A loading derp has occurred</h3>
+{{/if}}
 <div class="container-fluid">
     {{models-table 
     data=model 
@@ -8,7 +10,12 @@
     themeInstance=themeInstance
     showGlobalFilter=false
     filteringIgnoreCase = true
+    customComponent=(component "music-preview")
     }}
 
 </div>
 
+
+{{#if loading}}
+    {{loader-icon}}
+{{/if}}

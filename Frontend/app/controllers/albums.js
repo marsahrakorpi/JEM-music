@@ -11,7 +11,7 @@ export default Controller.extend({
 
     init(){
         this._super(...arguments);
-        this.set('loading', true)
+
         this.columns = [
             {component: 'expand-row', disableFiltering: true, mayBeHidden: false},
             {propertyName: 'id', sortedBy: 'idNumeric'},
@@ -27,8 +27,9 @@ export default Controller.extend({
             */
         ];
 
-        this.set('loading', false);
     },
+
+
 
     actions: {
         transitionTo(){

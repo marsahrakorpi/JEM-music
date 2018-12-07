@@ -1,10 +1,17 @@
 <h1 {{action "transitionTo"}}>GO BACK HOME</h1>
-
+{{#if error}}
+    <h3 style="color:red">A loading derp has occurred</h3>
+{{/if}}
 {{models-table 
-data=model 
-columns=columns
-themeInstance=themeInstance
-showGlobalFilter=false
-expandedRowComponent=(component "expanded-row")
+    data=model 
+    columns=columns
+    themeInstance=themeInstance
+    showGlobalFilter=false
+    expandedRowComponent=(component "expanded-row")
 }}
+
+{{#if loading}}
+    {{loader-icon}}
+{{/if}}
+
 

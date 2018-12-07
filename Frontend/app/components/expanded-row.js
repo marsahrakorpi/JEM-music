@@ -9,8 +9,9 @@ export default Component.extend({
     init(){
       this._super(...arguments);
       this.columns = [
-        {propertyName: 'id', sortedBy: 'idNumeric'},
-        {propertyName: 'name'}
+        {propertyName: 'id'},
+        {propertyName: 'name'},
+        {component: 'music-preview'},
       ]
     }
 

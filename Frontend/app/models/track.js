@@ -6,16 +6,18 @@ export default DS.Model.extend({
     composer: DS.attr(),
     //mediaTypeId: DS.attr(),
     name: DS.attr(),
+    title: DS.attr(),
     price: DS.attr(),
     milliseconds: DS.attr(),
+    length: computed('milliseconds', function() {
+        let minutes = Math.floor(this.get('milliseconds') / 60000);
+        let seconds = ((this.get('milliseconds') % 60000) / 1000).toFixed(0);
+        return (seconds == 60 ? (minutes+1) + ":00" : minutes + ":" + (seconds < 10 ? "0" : "") + seconds);
+    }),
     trackid: DS.attr(),
     unitprice: DS.attr(),
-    warbosses: DS.hasMany('track'),
     album: DS.belongsTo('album'),
 
     genre: DS.belongsTo('genre'),
-    idNumeric: computed('id', function () {
-        return parseInt(this.get('id'), 10);
-    })
 
 });

@@ -17,12 +17,14 @@ export default Controller.extend({
         this.columns = [
             {propertyName: "id", title:"#"},
             {propertyName: 'name'},
-            {propertyName: 'obj.Title', title:"Album"},
-            {propertyName: 'milliseconds', tile:"Length"},
+            {propertyName: 'title', title:"Album"},
+            {propertyName: 'length', tile:"Length"},
             {component: 'music-preview'},
         ];
 
         this.set('loading', false);
+
+        this.set('data', this.get('store').peekAll('track'));
     },
 
     actions: {

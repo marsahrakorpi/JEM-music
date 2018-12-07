@@ -40,7 +40,7 @@ public class Artists extends HttpServlet {
 		String sql = "SELECT * FROM Artist RIGHT JOIN Album ON Album.ArtistId = Artist.ArtistId";
 		
 		res = db.queryDB(sql, "Artist");
-		
+		response.setContentType("application/json");
 	    response.addHeader("Access-Control-Allow-Origin", "*");
 	    response.addHeader("Access-Control-Allow-Methods", "GET, PUT, POST, OPTIONS, DELETE");
 	    response.addHeader("Access-Control-Allow-Headers", "Content-Type");

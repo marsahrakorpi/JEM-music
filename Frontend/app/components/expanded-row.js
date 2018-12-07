@@ -9,7 +9,7 @@ export default Component.extend({
     init(){
       this._super(...arguments);
       this.columns = [
-        {propertyName: 'id', sortedBy: 'idNumeric'},
+        {propertyName: 'id'},
         {propertyName: 'name'}
       ]
     }

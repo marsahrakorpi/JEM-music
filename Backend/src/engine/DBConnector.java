@@ -142,7 +142,7 @@ public class DBConnector {
 									relation_ship = new JSONObject();
 									relation_ship.put("id", relation_rs.getObject("TrackId"));
 									relation_ship.put("type", "track");
-
+									System.out.println(relation_rs.getObject("TrackId"));
 									rel_data.put(relation_ship);
 								}
 

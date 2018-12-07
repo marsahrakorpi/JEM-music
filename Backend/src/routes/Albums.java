@@ -58,6 +58,7 @@ public class Albums extends HttpServlet {
 	    response.addHeader("Access-Control-Allow-Methods", "GET, PUT, POST, OPTIONS, DELETE");
 	    response.addHeader("Access-Control-Allow-Headers", "Content-Type");
 	    response.addHeader("Access-Control-Max-Age", "86400");
+
 		out.print(res);
 	}
 

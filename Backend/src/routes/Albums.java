@@ -16,10 +16,10 @@ import engine.DBConnector;
 /**
  * Servlet implementation class Albums
  */
-@WebServlet("/albums")
+@WebServlet("/albums/*")
 public class Albums extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+      
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -32,18 +32,28 @@ public class Albums extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String path = "";
+		try{
+			path = request.getPathInfo().substring(1).toLowerCase();
+		} catch (NullPointerException e) {
+			
+		}
+		System.out.println(path);
+		
 		JSONObject res = new JSONObject();
 		PrintWriter out = response.getWriter();
 		
 		DBConnector db = new DBConnector();
 		String sql = "";
-		
-		if(request.getParameterMap() != null) {
-			sql = db.queryBuilder("Album", request.getParameterMap());
+		if(path.equals("")) {
+			sql = "SELECT * FROM Album LEFT JOIN Artist on Album.ArtistId = Artist.ArtistId LIMIT 25";
+		} else {
+			sql = "SELECT * FROM Album WHERE AlbumID = "+ path;
 		}
 		
-		res = db.queryDB(sql, "Album");
 		
+		res = db.queryDB(sql, "Album");
+		response.setContentType("application/json");
 		out.print(res);
 	}
 

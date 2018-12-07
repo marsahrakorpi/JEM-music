@@ -1,10 +1,14 @@
 
-<h1>Track List</h1>
+<h1 {{action "transitionTo"}}>GO BACK HOME</h1>
+
 <div class="container-fluid">
     {{models-table 
     data=model 
     columns=columns
     themeInstance=themeInstance
-    showGlobalFilter=false}}
-</div>>
+    showGlobalFilter=false
+    filteringIgnoreCase = true
+    }}
+
+</div>
 

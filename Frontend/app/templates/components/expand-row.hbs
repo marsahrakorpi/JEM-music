@@ -1,7 +1,6 @@
 {{#if isExpanded}}
-  <a href="#" {{action "collapseRow" index record bubbles=false}} class={{themeInstance.collapseRow}}>Hide </a>
+  <a href="#" {{action "collapseRow" index record bubbles=false}} class={{themeInstance.collapseRow}}>Hide Tracks</a>
 {{else}}
-  <a href="#" {{action "expandRow" index record bubbles=false}} class={{themeInstance.expandRow}}>Show </a>
+  <a href="#" {{action "expandRow" index record bubbles=false}} class={{themeInstance.expandRow}}>Show Tracks</a>
 {{/if}}
-{{yield}}
 {{yield}}

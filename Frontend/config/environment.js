@@ -6,6 +6,7 @@ module.exports = function(environment) {
     environment,
     rootURL: '/',
     locationType: 'auto',
+    jemapiURL: "http://localhost:8080/JEMAPI",
     EmberENV: {
       FEATURES: {
         // Here you can enable experimental features on an ember canary build
@@ -20,7 +21,7 @@ module.exports = function(environment) {
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
-      jemapiURL : "http://localhost:8080/JEMAPI"
+
     }
   };
 
@@ -47,7 +48,7 @@ module.exports = function(environment) {
 
   if (environment === 'production') {
     // here you can enable a production-specific feature
-    jemapiURL = "https://jemapi.herokuapp.com/"
+    ENV.jemapiURL = "https://jemapi.herokuapp.com/"
   }
 
   return ENV;

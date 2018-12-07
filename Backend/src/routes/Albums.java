@@ -46,7 +46,7 @@ public class Albums extends HttpServlet {
 		DBConnector db = new DBConnector();
 		String sql = "";
 		if(path.equals("")) {
-			sql = "SELECT * FROM Album LEFT JOIN Artist on Album.ArtistId = Artist.ArtistId LIMIT 25";
+			sql = "SELECT * FROM Album LEFT JOIN Artist on Album.ArtistId = Artist.ArtistId ";
 		} else {
 			sql = "SELECT * FROM Album WHERE AlbumID = "+ path;
 		}
@@ -54,6 +54,10 @@ public class Albums extends HttpServlet {
 		
 		res = db.queryDB(sql, "Album");
 		response.setContentType("application/json");
+	    response.addHeader("Access-Control-Allow-Origin", "*");
+	    response.addHeader("Access-Control-Allow-Methods", "GET, PUT, POST, OPTIONS, DELETE");
+	    response.addHeader("Access-Control-Allow-Headers", "Content-Type");
+	    response.addHeader("Access-Control-Max-Age", "86400");
 		out.print(res);
 	}
 

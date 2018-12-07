@@ -18,7 +18,8 @@ export default Controller.extend({
             {propertyName: "id", title:"#"},
             {propertyName: 'name'},
             {propertyName: 'obj.Title', title:"Album"},
-            {propertyName: 'milliseconds', tile:"Length"}
+            {propertyName: 'milliseconds', tile:"Length"},
+            {component: 'music-preview'},
         ];
 
         this.set('loading', false);

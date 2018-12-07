@@ -117,6 +117,22 @@ public class DBConnector {
 						
 						relation.put("data", rel_data);
 						row_relationships.put("album", rel_data);
+						
+						//reset jsons
+						relation_ship = new JSONObject();
+						rel_data = new JSONArray();
+						
+						String artistId = ""+rs.getObject("ArtistId");
+						String artistName = ""+rs.getObject("Artist.Name");
+						
+						relation_ship.put("id", artistId);
+						relation_ship.put("name", artistName);
+						relation_ship.put("type", "artist");
+						
+						rel_data.put(relation_ship);
+						
+						relation.put("data", rel_data);
+						row_relationships.put("artist", rel_data);
 						break;
 						
 						/*

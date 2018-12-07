@@ -1,7 +1,7 @@
 import Service from '@ember/service';
 import ENV from '../config/environment'
 import $ from 'jquery'
-import RSVP, { resolve } from 'rsvp';
+
 export default Service.extend({
     /*https://developer.spotify.com/documentation/general/guides/authorization-guide/#client-credentials-flow*/
 /*
@@ -10,10 +10,7 @@ export default Service.extend({
 *Base 64 encoded string that contains the client ID and client secret key. The field must have the format: Authorization: Basic <base64 encoded client_id:client_secret>
 *
 */
-    client_credentials: ENV.spotify_ClientId+":"+ENV.spotify_ClientSecret,
 
-    client_id : ENV.spotify_ClientId, // Your client id
-    client_secret :ENV.spotify_ClientSecret, // Your secret
     access_token: null,
 
     init(){
@@ -22,8 +19,7 @@ export default Service.extend({
     },
 
     authenticate(){
-        let cred = this.get('client_credentials');
-        console.log(cred);
+
         let accessToken = $.ajax({
             url: ENV.jemapiURL+"/SpotifyAuthentication",
             method: "GET",
@@ -35,7 +31,7 @@ export default Service.extend({
         
     },
 
-    getTrackSingle(searchTerm, album){
+    getTrackSingle(searchTerm){
 
         let accessToken = this.get('access_token').responseText;
 

@@ -16,14 +16,6 @@ body, html {
     padding-left:0;
     padding-right: 0;
   }
-.index-main-img{
-    position: relative;
-    background-attachment: fixed;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    min-height: 100vh;
-}
 
 .container-parallax{
     height: 65vh;
@@ -44,12 +36,9 @@ body, html {
   
   }
 .bgimg-1 {
-    background: url("../../concert-main.jpg");
-    width:100%;
+    background-image: url("../../concert-main.jpg");
     min-height: 100vh;
-    background-size: cover;
 
-    opacity: 0.85;
 }
   
 .bgimg-2 {
@@ -74,6 +63,14 @@ body, html {
     text-align: center;
     color: #000;
 }
+
+/* Turn off parallax scrolling for tablets and phones */
+@media only screen and (max-device-width: 1024px) {
+    .bgimg-1, .bgimg-2, .bgimg-3 {
+        background-attachment: scroll;
+    }
+}
+
 
 .caption span.border {
     background-color: #111;

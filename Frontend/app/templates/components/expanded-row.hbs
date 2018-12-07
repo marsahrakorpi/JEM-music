@@ -1,0 +1,10 @@
+<h1>Tracks in album: {{record.title}} by {{record.name}} </h1>
+{{models-table
+    data=record.tracks
+    columns=columns
+    themeInstance=internalThemeInstance
+    showColumnsDropdown=false
+    showGlobalFilter=false
+    useFilteringByColumns=false
+    showComponentFooter=false
+}}

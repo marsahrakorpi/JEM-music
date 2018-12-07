@@ -7,6 +7,11 @@ const Router = EmberRouter.extend({
 });
 
 Router.map(function() {
+  this.route('connect');
+  this.route('tracks');
+  this.route('albums');
+  this.route('artists');
+  this.route('klan');
 });
 
 export default Router;

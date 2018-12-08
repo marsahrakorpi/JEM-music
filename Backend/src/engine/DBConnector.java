@@ -79,12 +79,12 @@ public class DBConnector {
 		
 		
 
-		
+		ResultSet rs = null;
 		
 		try {
 			
 			stmt = connection.createStatement();
-			ResultSet rs = stmt.executeQuery(query);
+			rs = stmt.executeQuery(query);
 
 			while(rs.next()) {
 
@@ -247,10 +247,10 @@ public class DBConnector {
 		responseObject.put("data", response_array);
 		//System.out.println(responseObject);
 		try {
+			rs.close();
+			stmt.close();
 			connection.close();
-			relation_connection.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

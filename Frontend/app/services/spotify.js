@@ -1,6 +1,7 @@
 import Service from '@ember/service';
 import ENV from '../config/environment'
 import $ from 'jquery'
+import { Promise, resolve, reject } from 'rsvp';
 
 export default Service.extend({
     /*https://developer.spotify.com/documentation/general/guides/authorization-guide/#client-credentials-flow*/
@@ -35,17 +36,17 @@ export default Service.extend({
 
         let accessToken = this.get('access_token').responseText;
 
-        return $.ajax({
+        return new Promise(resolve => {
+            $.ajax({
             url: "https://api.spotify.com/v1/search?q="+searchTerm+"&type=track&offset=0&limit=20",
             method: "GET",
             headers: {
                 "Authorization": "Bearer "+accessToken
             },
-            success: function(res){
-                return res;
-            },
-            async:false,
-        }).responseJSON;
-
+            }).then(res =>{
+                //console.log (res)
+                resolve(res);
+            });
+        });
     }
 });

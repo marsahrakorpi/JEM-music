@@ -17,7 +17,7 @@ export default DS.Model.extend({
     trackid: DS.attr(),
     unitprice: DS.attr(),
     album: DS.belongsTo('album'),
-
+    artist: DS.belongsTo('artist'),
     genre: DS.belongsTo('genre'),
 
 });

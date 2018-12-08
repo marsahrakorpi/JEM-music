@@ -13,18 +13,18 @@ export default Controller.extend({
 
     init(){
         this._super(...arguments);
-        this.set('loading', true)
         this.columns = [
             {propertyName: "id", title:"#"},
             {propertyName: 'name'},
             {propertyName: 'title', title:"Album"},
             {propertyName: 'length', tile:"Length"},
+            {component: 'search-for-artist', title:"Artist"},
+
+            {propertyName: 'composer', title:"Composer"},
+            {propertyName: 'unitprice', title:"Price"},
             {component: 'music-preview'},
         ];
 
-        this.set('loading', false);
-
-        this.set('data', this.get('store').peekAll('track'));
     },
 
     actions: {

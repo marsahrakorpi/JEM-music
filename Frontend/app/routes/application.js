@@ -16,8 +16,9 @@ export default Route.extend({
         const store = this.get('store');
         let me  = this;
 
-        this.controllerFor('tracks').loading = true;
+
         if(localStorage.getItem('tracks') === null) {
+            this.controllerFor('tracks').loading = true;
             $.ajax({
                 url: ENV.jemapiURL+'/tracks',
                 method: "GET",

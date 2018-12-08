@@ -1,7 +1,9 @@
-<h1 {{action "transitionTo"}}>GO BACK HOME</h1>
 {{#if error}}
     <h3 style="color:red">A loading derp has occurred</h3>
 {{/if}}
+
+<div class="container-fluid music-table">
+    {{table-title "albums"}}
 {{models-table 
     data=model 
     columns=columns
@@ -9,7 +11,7 @@
     showGlobalFilter=false
     expandedRowComponent=(component "expanded-row")
 }}
-
+</div>
 {{#if loading}}
     {{loader-icon}}
 {{/if}}

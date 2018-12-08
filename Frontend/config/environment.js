@@ -7,9 +7,7 @@ module.exports = function(environment) {
     rootURL: '/',
     locationType: 'auto',
     jemapiURL: "http://localhost:8080/JEMAPI",
-    spotify_ClientId: "40e7cf37f399406796151cd92509230b",
-    spotify_ClientSecret: "2d11fc4ab38547739b14d8ce0b51a86e",
-    spotify_callbackUrl: "http://localhost:4200/callback",
+
     EmberENV: {
       FEATURES: {
         // Here you can enable experimental features on an ember canary build
@@ -51,7 +49,7 @@ module.exports = function(environment) {
 
   if (environment === 'production') {
     // here you can enable a production-specific feature
-    ENV.jemapiURL = "https://jemapi.herokuapp.com/"
+    ENV.jemapiURL = "https://jemapi.herokuapp.com"
   }
 
   return ENV;

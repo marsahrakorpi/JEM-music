@@ -15,8 +15,8 @@ export default Controller.extend({
         this.columns = [
             {component: 'expand-row', disableFiltering: true, mayBeHidden: false},
             {propertyName: 'id', sortedBy: 'idNumeric'},
-            {propertyName: 'title'},
-            {propertyName: 'name'},
+            {propertyName: 'title', title: "Album Title"},
+            {propertyName: 'name', title:"Artist"},
 
             /*
             {component: 'expand-row', disableFiltering: true, mayBeHidden: false},

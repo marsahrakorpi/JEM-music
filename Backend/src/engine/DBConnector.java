@@ -56,46 +56,56 @@ public class DBConnector {
 		String[] ids = {"GenreId", "AlbumId", "ArtistId", "TrackId"};
 		Statement stmt = null;
 		System.out.println(query);
+		
+		
+		String bufferedAlbumId = "";
+		
+		
+		
+		
+		//colum name and info in column
+		// {artist: iron maiden} 
+		JSONObject rel = new JSONObject();
+		//all columns with info
+		/*
+		 * // {artist: iron maiden, name:"dingdong", something:"else"}
+		 */
+		JSONArray rel_data = new JSONArray();
+
+		//data:relationDataArray
+		JSONObject relation = new JSONObject();
+		//top level relationship json
+		JSONObject row_relationships = new JSONObject();
+		
+		
+
+		
+		
 		try {
+			
 			stmt = connection.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
-			
+
 			while(rs.next()) {
+
+				//build row info json, this is the array 
+				JSONObject row_info = new JSONObject();
+				
+				String col_name = "";
+				String table_name = "";
+				
+				
 				JSONObject queryObject = new JSONObject();
 				
 				ResultSetMetaData md = rs.getMetaData();
 				int colCount = md.getColumnCount();  
-				
-				//colum name and info in column
-				// {artist: iron maiden} 
-				JSONObject rel = new JSONObject();
-				
-				
-				//all columns with info
-				/*
-				 * // {artist: iron maiden, name:"dingdong", something:"else"}
-				 */
-				JSONArray rel_data = new JSONArray();
-				
-				
-				//build row info json, this is the array 
-				JSONObject row_info = new JSONObject();
-				
-				
-				//get relationships for record
-				//Arrays.stream(ids).anyMatch(col_name::equals)
-				//if relationship is not empty
-				JSONObject relation = new JSONObject();
-				//top level relationship json
-				JSONObject row_relationships = new JSONObject();
-				
-				String col_name = "";
-				String table_name = "";
+
 				for (int j = 1; j <= colCount ; j++){  
 					col_name = md.getColumnName(j);
 					table_name = md.getTableName(j);
-					
-
+					if(table.equals("Album") && col_name.equals("TrackId")) {
+						continue;
+					}
 					row_info.put(col_name.toLowerCase(), rs.getObject(col_name));
 
 				}
@@ -103,35 +113,39 @@ public class DBConnector {
 
 				String sql;
 				Statement relation_statement = null;
-				JSONObject relation_ship = new JSONObject();
+
 				switch(table) {
 					case "Track":	
-						
+						rel = new JSONObject();
+						rel_data = new JSONArray();
+						row_relationships = new JSONObject();
+						rel = new JSONObject();
+						relation = new JSONObject();
 						
 						String albumId = ""+rs.getObject("AlbumId");
 						
-						relation_ship.put("id", albumId);
-						relation_ship.put("type", "album");
+						rel.put("id", albumId);
+						rel.put("type", "album");
 						
-						rel_data.put(relation_ship);
+						rel_data.put(rel);
 						
-						relation.put("data", rel_data);
+						//relation.put("data", rel_data);
 						row_relationships.put("album", rel_data);
 						
 						//reset jsons
-						relation_ship = new JSONObject();
+						rel = new JSONObject();
 						rel_data = new JSONArray();
+						relation = new JSONObject();
 						
 						String artistId = ""+rs.getObject("ArtistId");
 						String artistName = ""+rs.getObject("Artist.Name");
 						
-						relation_ship.put("id", artistId);
-						relation_ship.put("name", artistName);
-						relation_ship.put("type", "artist");
+						rel.put("id", artistId);
+						rel.put("name", artistName);
+						rel.put("type", "artist");
 						
-						rel_data.put(relation_ship);
-						
-						relation.put("data", rel_data);
+						rel_data.put(rel);
+						//relation.put("data", rel_data);
 						row_relationships.put("artist", rel_data);
 						break;
 						
@@ -147,28 +161,57 @@ public class DBConnector {
 
 
 					case "Album":
-							sql = "SELECT Track.TrackId FROM Track LEFT JOIN Album ON Album.AlbumId = Track.AlbumId WHERE Track.AlbumId = " + rs.getObject("AlbumId");
+							//sql = "SELECT Track.TrackId FROM Track LEFT JOIN Album ON Album.AlbumId = Track.AlbumId WHERE Track.AlbumId = " + rs.getObject("AlbumId");
+							String rsAlbum = ""+rs.getObject("AlbumId");
 							
-							//try query
-							try {
-								relation_statement = relation_connection.createStatement();
-								ResultSet relation_rs = relation_statement.executeQuery(sql);
+							
+							if(bufferedAlbumId.equals(rsAlbum)) {				
+								System.out.println("Album is still the same, just add track info");
+								//bufferedAlbumId = rsAlbum;
 								
-								while(relation_rs.next()) {
-									relation_ship = new JSONObject();
-									relation_ship.put("id", relation_rs.getObject("TrackId"));
-									relation_ship.put("type", "track");
-									System.out.println(relation_rs.getObject("TrackId"));
-									rel_data.put(relation_ship);
-								}
-
+								rel = new JSONObject();
+								rel.put("id", rs.getObject("TrackId"));
+								rel.put("type", "track");
+								rel_data.put(rel);
+								relation.put("data", rel_data);
+								continue;
+								
+							}else {
+								bufferedAlbumId = rsAlbum;
 								relation.put("data", rel_data);
 								row_relationships.put("tracks", relation);
 								
-							} catch (SQLException ex) {
-								ex.printStackTrace();
+								if(bufferedAlbumId=="") {
+									continue;
+								}
+								
+								
+								//Add artist relation
+								rel = new JSONObject();
+								row_relationships = new JSONObject();
+								rel_data = new JSONArray();
+								relation = new JSONObject();
+
+								rel.put("id", rs.getObject("ArtistId"));
+								rel.put("type", "artist");
+
+								rel_data.put(rel);
+								//relation.put("data", rel_data);
+								row_relationships.put("artist", rel_data);
+
+								rel_data = new JSONArray();
+								 
+								//add first track to relation
+								rel = new JSONObject();
+								relation = new JSONObject();
+								
+								rel.put("id", rs.getObject("TrackId"));
+								rel.put("type", "track");
+								rel_data.put(rel);
+								relation.put("data", rel_data);
 							}
 
+							
 							break;
 				}
 

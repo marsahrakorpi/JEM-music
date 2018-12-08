@@ -46,7 +46,8 @@ public class Albums extends HttpServlet {
 		DBConnector db = new DBConnector();
 		String sql = "";
 		if(path.equals("")) {
-			sql = "SELECT * FROM Album LEFT JOIN Artist on Album.ArtistId = Artist.ArtistId ";
+			//sql = "SELECT * FROM Album LEFT JOIN Artist on Album.ArtistId = Artist.ArtistId LIMIT 25";
+			sql = "SELECT Album.*, Track.TrackId, Artist.Name FROM Album LEFT JOIN Artist ON Album.ArtistId = Artist.ArtistId LEFT JOIN Track ON Track.AlbumId = Album.AlbumId ORDER BY Album.AlbumId";
 		} else {
 			sql = "SELECT * FROM Album WHERE AlbumID = "+ path;
 		}

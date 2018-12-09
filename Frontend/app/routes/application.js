@@ -14,6 +14,6 @@ export default Route.extend({
 
         this.get('jemapi').loadAll();
 
-      }
+    }
 
 });

@@ -10,7 +10,7 @@ export default Component.extend({
     init(){
         this._super(...arguments);
         this.trackName = this.get('record').name;
-        this.album = this.get('record').title;
+        this.album = this.get('record.album').get('title');
         this.setSource();
 
     },
@@ -38,6 +38,9 @@ export default Component.extend({
             if(this.get('spotifyRecord')!=null){
                 this.set('source', this.get('spotifyRecord').preview_url);
                 
+            } else{
+                //HAVING THIS ENABLED WILL SOMETIMES GIVE WRONG RESULTS FOR TRACKS... 
+                this.set('source', this.get('spotifyRecordArray')[0].preview_url);
             }
 
             this.set('loading', false)

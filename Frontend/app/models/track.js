@@ -6,7 +6,7 @@ export default DS.Model.extend({
     composer: DS.attr(),
     //mediaTypeId: DS.attr(),
     name: DS.attr(),
-    title: DS.attr(),
+    //title: DS.attr(),
     price: DS.attr(),
     milliseconds: DS.attr(),
     length: computed('milliseconds', function() {
@@ -16,6 +16,7 @@ export default DS.Model.extend({
     }),
     trackid: DS.attr(),
     unitprice: DS.attr(),
+    albumid: DS.attr(),
     album: DS.belongsTo('album'),
     artist: DS.belongsTo('artist'),
     genre: DS.belongsTo('genre'),

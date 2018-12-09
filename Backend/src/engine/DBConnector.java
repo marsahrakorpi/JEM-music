@@ -2,13 +2,16 @@ package engine;
 
 
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +47,7 @@ public class DBConnector {
 		}
 	}
 	
-	public JSONObject queryDB(String query, String table) {
+	public JSONObject queryDB(String query, String table, Boolean singleRecord) {
 		
 		/*
 		 * Query Database with given table and sql query string
@@ -55,7 +58,7 @@ public class DBConnector {
 		JSONArray response_array = new JSONArray();
 		String[] ids = {"GenreId", "AlbumId", "ArtistId", "TrackId"};
 		Statement stmt = null;
-		System.out.println(query);
+		//System.out.println(query);
 		
 		
 		String bufferedAlbumId = "";
@@ -76,7 +79,7 @@ public class DBConnector {
 		JSONObject relation = new JSONObject();
 		//top level relationship json
 		JSONObject row_relationships = new JSONObject();
-		
+		JSONObject queryObject = new JSONObject();
 		
 
 		ResultSet rs = null;
@@ -90,12 +93,11 @@ public class DBConnector {
 
 				//build row info json, this is the array 
 				JSONObject row_info = new JSONObject();
-				
+				queryObject = new JSONObject();
 				String col_name = "";
 				String table_name = "";
 				
 				
-				JSONObject queryObject = new JSONObject();
 				
 				ResultSetMetaData md = rs.getMetaData();
 				int colCount = md.getColumnCount();  
@@ -166,7 +168,6 @@ public class DBConnector {
 							
 							
 							if(bufferedAlbumId.equals(rsAlbum)) {				
-								System.out.println("Album is still the same, just add track info");
 								//bufferedAlbumId = rsAlbum;
 								
 								rel = new JSONObject();
@@ -243,8 +244,14 @@ public class DBConnector {
 		}
 		
 		
+		
 		JSONObject responseObject = new JSONObject();
-		responseObject.put("data", response_array);
+		if(singleRecord) {
+			responseObject.put("data", queryObject);
+		} else {
+			responseObject.put("data", response_array);
+		}
+		
 		//System.out.println(responseObject);
 		try {
 			rs.close();
@@ -253,8 +260,90 @@ public class DBConnector {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		return responseObject;
+
+		
+	}
+	
+	public void updateRecord(String table, JSONObject attributes, String recordId) throws SQLException {
+		
+		String sql = "UPDATE "+table+" SET ";
+		
+		System.out.println(sql);
+		
+		Iterator<String> keys = attributes.keys();
+		
+		while(keys.hasNext()) {
+			String key = keys.next();
+		
+			String col_name = key.substring(0, 1).toUpperCase() + key.substring(1);
+			sql += col_name+" = ?, ";
+		}
+	
+		if(sql.endsWith(", ")) {
+			sql = sql.substring(0, sql.length()-2)+" ";
+		}
+		sql += "WHERE "+table+"Id = ?";
+
+
+	
+		//PREPARE STATEMENT
+		PreparedStatement stmt = null;
+		String[] intTypes = {"milliseconds", "bytes"};
+		String[] decimalTypes = {"unitprice"};
+		try {
+			stmt = connection.prepareStatement(sql);
+			
+			//RESET KEYS
+			Iterator<String> stmt_keys = attributes.keys();
+			int index = 1;
+			while(stmt_keys.hasNext()) {
+				
+				String skey = stmt_keys.next();
+				String skeyvalue = ""+attributes.get(skey);
+
+				if(skey.substring(skey.length()-2).equalsIgnoreCase("id")) {
+					//if key ends in id, it's probably on id => type int
+					System.out.println(skey);
+					System.out.println(skeyvalue);
+					stmt.setInt(index, Integer.parseInt(skeyvalue));
+				} else if (Arrays.asList(intTypes).contains(skey)) {
+					//if key is in the "this is an int column array", it's probably also an int
+					stmt.setInt(index, Integer.parseInt(skeyvalue));
+				} else if (Arrays.asList(decimalTypes).contains(skey)) {
+					//if key is in the "this is a decimal array", it's probably a decimal value
+					//BigDecimal dec = new BigDecimal( Double.parseDouble(skeyvalue));
+					stmt.setDouble(index, Double.parseDouble(skeyvalue));
+				} else {
+					//else it's just a string
+					
+					stmt.setString(index, skeyvalue);
+				}
+				
+				index++;
+			}
+
+			stmt.setInt(index, Integer.parseInt(recordId));
+			
+			System.out.println(stmt);
+			// execute update SQL statement
+			stmt.executeUpdate();
+			
+		} catch (SQLException e) {
+
+
+		} finally {
+
+			if (stmt != null) {
+				stmt.close();
+			}
+
+			if (connection != null) {
+				connection.close();
+			}
+
+		}
 	}
 	
 
@@ -272,7 +361,6 @@ public class DBConnector {
 			String[] value = params.get(qparam);
 			
 			String combined = qparam+"='"+value[0]+"'";
-			System.out.println(combined);
 			
 		}
 		
@@ -290,7 +378,6 @@ public class DBConnector {
 		//query += order;
 		query += limit;
 
-		System.out.println(query);
 		return query;
 		
 	}
@@ -299,7 +386,7 @@ public class DBConnector {
 	public JSONObject testConnection(String table) {
 		Statement stmt = null;
 		String query = "SELECT * FROM "+table+" LIMIT 25;";
-		JSONObject jo = queryDB(query, table);
+		JSONObject jo = queryDB(query, table, false);
 		return jo;
 	}
 	

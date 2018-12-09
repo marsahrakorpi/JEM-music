@@ -1,7 +1,5 @@
 <h1>Tracks in album: {{record.title}} by {{record.name}} </h1>
-{{#each record.tracks as |r|}}
-    {{log r}}
-{{/each}}
+
 {{models-table
     data=record.tracks
     columns=columns

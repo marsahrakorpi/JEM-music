@@ -52,8 +52,8 @@ public class Albums extends HttpServlet {
 			sql = "SELECT * FROM Album WHERE AlbumID = "+ path;
 		}
 		
-		
-		res = db.queryDB(sql, "Album");
+		Boolean singleRecord = false;
+		res = db.queryDB(sql, "Album", singleRecord);
 		response.setContentType("application/json");
 	    response.addHeader("Access-Control-Allow-Origin", "*");
 	    response.addHeader("Access-Control-Allow-Methods", "GET, PUT, POST, OPTIONS, DELETE");

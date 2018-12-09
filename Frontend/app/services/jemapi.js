@@ -2,10 +2,11 @@ import Service from '@ember/service';
 import { inject as service } from '@ember/service'
 import $ from 'jquery'
 import ENV from '../config/environment'
+import { resolve, reject } from 'rsvp';
 
 export default Service.extend({
     store: service(),
-
+    notifications: service('notification-messages'),
     track: null,
     loading: false,
     url: ENV.jemapiURL,
@@ -17,81 +18,83 @@ export default Service.extend({
 
     loadAll(){
         const store = this.get('store');
-        
-        if(localStorage.getItem('tracks') === null) {
             
-            //me.controllerFor('tracks').set('loading',true);
-            $.ajax({
-                url: ENV.jemapiURL+'/tracks',
-                method: "GET",
-                success: function(res){
-                    localStorage.setItem('tracks', JSON.stringify(res));
-                    store.pushPayload(res)
-                    //me.controllerFor('tracks').set('loading', false);
-                },
-                error: function(err){
-                    //me.controllerFor('tracks').set('loading', false);
-                    //me.controllerFor('tracks').set('error', true);
-                }
-            });
-        } else {
-            store.pushPayload(JSON.parse(localStorage.getItem("tracks")))
-        }
+        //me.controllerFor('tracks').set('loading',true);
+        $.ajax({
+            url: ENV.jemapiURL+'/tracks',
+            method: "GET",
+            success: function(res){
+            // localStorage.setItem('tracks', JSON.stringify(res));
+                store.pushPayload(res)
+                //me.controllerFor('tracks').set('loading', false);
+            },
+            error: function(err){
+                //me.controllerFor('tracks').set('loading', false);
+                //me.controllerFor('tracks').set('error', true);
+            }
+        });
 
-        if(localStorage.getItem('albums') === null) {
-            this.set('albumsLoading', true);
-           // this.controllerFor('albums').loading = true;
-            $.ajax({
-                url: ENV.jemapiURL+'/albums',
-                method: "GET",
-                success: function(res){
-                    localStorage.setItem('albums', JSON.stringify(res));
-                    store.pushPayload(res);
-                    //me.controllerFor('albums').set('loading', false);
-                },
-                error: function(err){
-                    //me.controllerFor('albums').set('loading', false);
-                    this.set('error', err);
-                }
-            });
-        } else {
-            store.pushPayload(JSON.parse(localStorage.getItem("albums")))
-        }
+        this.set('albumsLoading', true);
+    // this.controllerFor('albums').loading = true;
+        $.ajax({
+            url: ENV.jemapiURL+'/albums',
+            method: "GET",
+            success: function(res){
+            // localStorage.setItem('albums', JSON.stringify(res));
+                console.log(res);
+                store.pushPayload(res);
+                //me.controllerFor('albums').set('loading', false);
+            },
+            error: function(err){
+                //me.controllerFor('albums').set('loading', false);
+                this.set('error', err);
+            }
+        });
 
-        if(localStorage.getItem('artists') === null) {
-            $.ajax({
-                url: ENV.jemapiURL+'/artists',
-                method: "GET",
-                success: function(res){
-                    localStorage.setItem('artists', JSON.stringify(res));
-                    store.pushPayload(res)
-                },
-                error: function(err){
-                    //me.controllerFor('artists').set('loading', false);
-                    //me.controllerFor('artists').set('error', true);
-                }
-            });
-        } else {
-            store.pushPayload(JSON.parse(localStorage.getItem("artists")))
-        }
+        $.ajax({
+            url: ENV.jemapiURL+'/artists',
+            method: "GET",
+            success: function(res){
+                //7localStorage.setItem('artists', JSON.stringify(res));
+                store.pushPayload(res)
+            },
+            error: function(err){
+                //me.controllerFor('artists').set('loading', false);
+                //me.controllerFor('artists').set('error', true);
+            }
+        });
+    
 
-        if(localStorage.getItem('genres') === null) {
-            $.ajax({
-                url: ENV.jemapiURL+'/genres',
-                method: "GET",
-                success: function(res){
-                    localStorage.setItem('genres', JSON.stringify(res));
-                    store.pushPayload(res)
-                },
-                error: function(err){
-                   // me.controllerFor('genres').set('loading', false);
-                   // me.controllerFor('genres').set('error', true);
-                }
-            });
-        } else {
-            store.pushPayload(JSON.parse(localStorage.getItem("genres")))
-        }
+        $.ajax({
+            url: ENV.jemapiURL+'/genres',
+            method: "GET",
+            success: function(res){
+                //localStorage.setItem('genres', JSON.stringify(res));
+                store.pushPayload(res)
+            },
+            error: function(err){
+            // me.controllerFor('genres').set('loading', false);
+            // me.controllerFor('genres').set('error', true);
+            }
+        });
+        
+        this.set('loading', false)
+    },
 
-        this.set('loading', true)
+    save(record){
+        console.log("in save")
+        
+        record.save().then(() => {
+            this.get('notifications').success("Record saved succesfully", {
+                autoClear: true,
+                clearDuration: 2000
+            });
+        }).catch(() => {
+            this.get('notifications').error("Record could was not saved!", {
+                autoClear: true,
+                clearDuration: 2000
+            });
+        });         
+
     }
 });

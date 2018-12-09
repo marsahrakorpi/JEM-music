@@ -1,6 +1,7 @@
 {{#if error}}
     <h3 style="color:red">A loading derp has occurred</h3>
 {{/if}}
+{{notification-container position="bottom-left"}}
 <div class="container-fluid music-table">
     {{models-table 
     data=model 
@@ -9,6 +10,8 @@
     showGlobalFilter=false
     filteringIgnoreCase = true
     customComponent=(component "music-preview")
+    customComponent=(component "edit-table-row")
+    customComponent=(component "delete-table-row")
     }}
 
 </div>

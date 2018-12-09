@@ -1,5 +1,6 @@
 
 @import "ember-bootstrap/bootstrap";
+//@import "ember-power-select";
 
 /*
 *Writing everything here because im a lazy slob and can't be bothered to import
@@ -179,3 +180,9 @@ body, html {
     min-height: 75%;
     background-color: rgba(177, 177, 177, 0.65);
 }
+
+.in-modal-dropdown {
+    z-index: 2000;
+}
+
+@import "ember-power-select";

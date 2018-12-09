@@ -14,15 +14,16 @@ export default Controller.extend({
     init(){
         this._super(...arguments);
         this.columns = [
+            {component: 'edit-table-row'},
+            {component: 'delete-table-row'},
             {propertyName: "id", title:"#"},
             {propertyName: 'name'},
-            {propertyName: 'title', title:"Album"},
-            {propertyName: 'length', tile:"Length"},
-            {component: 'search-for-artist', title:"Artist"},
-
+            {propertyName: 'album.title', title:"Album"},
+            {propertyName: 'length', tile:"Length", value: length},
             {propertyName: 'composer', title:"Composer"},
             {propertyName: 'unitprice', title:"Price"},
             {component: 'music-preview'},
+
         ];
 
     },

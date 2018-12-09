@@ -38,8 +38,8 @@ public class Genres extends HttpServlet {
 		
 		DBConnector db = new DBConnector();
 		String sql = "SELECT * FROM Genre";
-		
-		res = db.queryDB(sql, "Genre");
+		Boolean singleRecord = false;
+		res = db.queryDB(sql, "Genre", singleRecord);
 		response.setContentType("application/json");
 	    response.addHeader("Access-Control-Allow-Origin", "*");
 	    response.addHeader("Access-Control-Allow-Methods", "GET, PUT, POST, OPTIONS, DELETE");

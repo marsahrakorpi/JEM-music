@@ -1,6 +1,6 @@
 import Component from '@ember/component';
 import { inject as service } from '@ember/service'
-import { Promise, resolve } from 'rsvp';
+import { Promise } from 'rsvp';
 import { computed } from '@ember/object';
 export default Component.extend({
     store: service(),
@@ -13,7 +13,9 @@ export default Component.extend({
     albums: null,
 
     init(){
+
         this._super(...arguments);
+
         this.set('id', this.get('record').get('id'));
         this.set('name', this.get('record').get('name'));
         this.set('length', this.get('record').get('length'));
@@ -24,9 +26,9 @@ export default Component.extend({
     actions: {
         showModal(){
 
-            let promise = new Promise(resolve =>{
+            new Promise(resolve =>{
                 let albumsArray = []
-                let albums = this.get('store').peekAll('album').map(album =>{
+                 this.get('store').peekAll('album').map(album =>{
                     let id = album.get('id');
                     let name = album.get('title');
                     albumsArray.push({id:id, name:name})
@@ -47,11 +49,12 @@ export default Component.extend({
             this.set('showModal', false)
         },
         submit(){
+            
             let trackid = this.get('id');
 
             let name = this.get('name');
             let albumId = this.get('selected.id');
-            let title = this.get('selected.name');
+
             //let mediaTypeId = this.get('mediatypeid');
             //let genreId = this.get('genreid');
             let composer = this.get('composer');
@@ -68,15 +71,12 @@ export default Component.extend({
             //track.set('title', title);
             //save track to backend and update store and ls
 
-            this.get('jemapi').save(track);
+            this.get('jemapi').saveRecord(track);
 
             this.set('showModal', false);
 
-
-            console.log("Edit submitted");
         }
     },
-
     minToMs(millis){
         try{
             let split = millis.split(":");
@@ -89,4 +89,5 @@ export default Component.extend({
         }
 
     }
+
 });

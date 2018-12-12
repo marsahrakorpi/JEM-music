@@ -2,6 +2,7 @@ package routes;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -39,7 +40,12 @@ public class Artists extends HttpServlet {
 		DBConnector db = new DBConnector();
 		String sql = "SELECT * FROM Artist RIGHT JOIN Album ON Album.ArtistId = Artist.ArtistId";
 		Boolean singleRecord = false;
-		res = db.queryDB(sql, "Artist", singleRecord);
+		try {
+			res = db.queryDB(sql, "Artist", singleRecord);
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
 		response.setContentType("application/json");
 	    response.addHeader("Access-Control-Allow-Origin", "*");
 	    response.addHeader("Access-Control-Allow-Methods", "GET, PUT, POST, OPTIONS, DELETE");

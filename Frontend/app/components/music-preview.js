@@ -1,6 +1,6 @@
 import Component from '@ember/component';
 import { inject as service } from '@ember/service'
-import { Promise, resolve, reject } from 'rsvp';
+
 export default Component.extend({
     spotify: service(),
     source: null,

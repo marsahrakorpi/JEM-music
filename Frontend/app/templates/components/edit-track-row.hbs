@@ -35,8 +35,8 @@
             {{/bs-form}}
         {{/modal.body}}
         {{#modal.footer as |footer|}}
-            {{#bs-button onClick=(action "close") type="danger"}}Oh no, forget it!{{/bs-button}}
-            {{#bs-button onClick=(action "submit") type="success"}}Yeah!{{/bs-button}}
+            {{#bs-button onClick=(action "close") type="danger"}}Cancel{{/bs-button}}
+            {{#bs-button onClick=(action "submit") type="success"}}Confirm{{/bs-button}}
         {{/modal.footer}}
     {{/bs-modal}}
 {{/if}}

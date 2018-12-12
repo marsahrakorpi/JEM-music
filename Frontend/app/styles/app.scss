@@ -134,6 +134,7 @@ body, html {
     position: absolute;
     left: 10px;
 }
+
 .pull-right{
     text-align: left;
     position: absolute;
@@ -185,4 +186,18 @@ body, html {
     z-index: 2000;
 }
 
+.loading{
+    color:red !important;
+    opacity: 0.3;
+}
+.loaded{
+    opacity: 1;
+}
+
+.top{
+    position: relative;
+    top: 3vh;
+    left: 47vw;
+
+}
 @import "ember-power-select";

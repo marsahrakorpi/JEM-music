@@ -9,7 +9,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import engine.DBConnector;
@@ -48,37 +47,89 @@ public class Tracks extends PATCHServlet {
 		}
 		
 
-		res = db.queryDB(sql, "Track", singleRecord);
+		try {
+			res = db.queryDB(sql, "Track", singleRecord);
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
 		response.setContentType("application/json");
 	    response.addHeader("Access-Control-Allow-Origin", "*");
-	    response.addHeader("Access-Control-Allow-Methods", "GET");
+	    response.addHeader("Access-Control-Allow-Methods", "GET, DELETE");
 	    response.addHeader("Access-Control-Allow-Headers", "Content-Type");
 	    response.addHeader("Access-Control-Max-Age", "86400");
 		out.print(res);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		
 		response.setContentType("application/json");
 	    response.addHeader("Access-Control-Allow-Origin", "*");
 	    response.addHeader("Access-Control-Allow-Methods", "GET, PUT, POST, OPTIONS, DELETE");
 	    response.addHeader("Access-Control-Allow-Headers", "Content-Type");
 	    response.addHeader("Access-Control-Max-Age", "86400");
-		System.out.println("Doing a post!!! OMG");
 	}
 	
 	protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("application/json");
 		response.setHeader("Access-Control-Allow-Origin", "*");
-		response.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH");
+		response.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
 		response.setHeader("Access-Control-Allow-Headers", "Content-Type");
 		response.setHeader("Access-Control-Max-Age", "86400");
-
-		System.out.println("Doing OPTIONS!!! OMG");
 	}
 	
+	public void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		PrintWriter out = response.getWriter();
+		JSONObject res = new JSONObject();
+
+		System.out.println(res);
+		String recordid = "";
+		try{
+			recordid = request.getPathInfo().substring(1).toLowerCase();
+			
+			if(!recordid.equals("")) {
+				DBConnector db = new DBConnector();
+				String sql = "";
+				Boolean singleRecord = false;
+
+				singleRecord = true;
+				sql = "SELECT * FROM Track LEFT JOIN Album on Track.AlbumId = Album.albumId LEFT JOIN Artist on Album.ArtistId = Artist.ArtistId LEFT JOIN Genre on Track.GenreId = Genre.GenreId WHERE TrackId = "+recordid;
+				try {
+					res = db.queryDB(sql, "Track", singleRecord);
+				} catch (SQLException e) {
+
+					e.printStackTrace();
+				}
+				
+				
+				db = new DBConnector();
+				try {
+					db.deleteRecord("Track", recordid);
+
+				} catch (SQLException e) {
+
+				}
+			} else {
+				
+
+
+			}
+		} catch (NullPointerException e) {
+
+		}
+
+		response.setContentType("application/json");
+		response.addHeader("Access-Control-Allow-Origin", "*");
+		response.addHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
+		response.addHeader("Access-Control-Allow-Headers", "Content-Type");
+		response.addHeader("Access-Control-Max-Age", "86400");
+
+		out.print(res);
+	}
+	
+	
 	public void doPatch(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("Doing PATCH!! OMG");
+
 		PrintWriter out = response.getWriter();
 		
 		String body = request.getReader().lines()
@@ -132,7 +183,6 @@ public class Tracks extends PATCHServlet {
 		response.addHeader("Access-Control-Max-Age", "86400");
 
 		out.print(res);
-
 	}
 
 }

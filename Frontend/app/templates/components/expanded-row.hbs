@@ -1,11 +1,15 @@
-<h1>Tracks in album: {{record.title}} by {{record.name}} </h1>
-
-{{models-table
-    data=record.tracks
-    columns=columns
-    themeInstance=internalThemeInstance
-    showColumnsDropdown=false
-    showGlobalFilter=false
-    useFilteringByColumns=false
-    showComponentFooter=false
-}}
+{{#models-table data=record themeInstance=internalThemeInstance showColumnsDropdown=false showGlobalFilter=false useFilteringByColumns=false showComponentFooter=false columns=columns as |mt|}}
+  {{#mt.table as |table|}}
+    {{#table.body as |body|}}
+        {{#if body.visibleContent.length}}
+        {{#each body.visibleContent as |record index|}}
+            {{body.row record=record index=index}}
+        {{/each}}
+        {{else}}
+        {{body.no-data}}
+        {{/if}}
+    {{/table.body}}
+    {{! ... }}
+  {{/mt.table}}
+  {{! .... }}
+{{/models-table}}

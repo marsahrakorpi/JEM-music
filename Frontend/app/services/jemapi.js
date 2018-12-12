@@ -2,13 +2,12 @@ import Service from '@ember/service';
 import { inject as service } from '@ember/service'
 import $ from 'jquery'
 import ENV from '../config/environment'
-import { resolve, reject } from 'rsvp';
+
 
 export default Service.extend({
     store: service(),
     notifications: service('notification-messages'),
-    track: null,
-    loading: false,
+    
     url: ENV.jemapiURL,
 
     init(){
@@ -18,36 +17,26 @@ export default Service.extend({
 
     loadAll(){
         const store = this.get('store');
-            
-        //me.controllerFor('tracks').set('loading',true);
+
         $.ajax({
             url: ENV.jemapiURL+'/tracks',
             method: "GET",
             success: function(res){
-            // localStorage.setItem('tracks', JSON.stringify(res));
                 store.pushPayload(res)
-                //me.controllerFor('tracks').set('loading', false);
             },
             error: function(err){
-                //me.controllerFor('tracks').set('loading', false);
-                //me.controllerFor('tracks').set('error', true);
+                console.log(err)// eslint-disable-line no-console
             }
         });
 
-        this.set('albumsLoading', true);
-    // this.controllerFor('albums').loading = true;
         $.ajax({
             url: ENV.jemapiURL+'/albums',
             method: "GET",
             success: function(res){
-            // localStorage.setItem('albums', JSON.stringify(res));
-                console.log(res);
                 store.pushPayload(res);
-                //me.controllerFor('albums').set('loading', false);
             },
             error: function(err){
-                //me.controllerFor('albums').set('loading', false);
-                this.set('error', err);
+                console.log(err)// eslint-disable-line no-console
             }
         });
 
@@ -55,12 +44,10 @@ export default Service.extend({
             url: ENV.jemapiURL+'/artists',
             method: "GET",
             success: function(res){
-                //7localStorage.setItem('artists', JSON.stringify(res));
                 store.pushPayload(res)
             },
             error: function(err){
-                //me.controllerFor('artists').set('loading', false);
-                //me.controllerFor('artists').set('error', true);
+                console.log(err)// eslint-disable-line no-console
             }
         });
     
@@ -69,32 +56,45 @@ export default Service.extend({
             url: ENV.jemapiURL+'/genres',
             method: "GET",
             success: function(res){
-                //localStorage.setItem('genres', JSON.stringify(res));
                 store.pushPayload(res)
             },
             error: function(err){
-            // me.controllerFor('genres').set('loading', false);
-            // me.controllerFor('genres').set('error', true);
+                console.log(err)// eslint-disable-line no-console
             }
         });
-        
-        this.set('loading', false)
+
     },
 
-    save(record){
-        console.log("in save")
-        
+    saveRecord(record){
+
         record.save().then(() => {
             this.get('notifications').success("Record saved succesfully", {
                 autoClear: true,
                 clearDuration: 2000
             });
         }).catch(() => {
-            this.get('notifications').error("Record could was not saved!", {
+            this.get('notifications').error("Record was not saved!", {
                 autoClear: true,
                 clearDuration: 2000
             });
         });         
+
+    },
+
+    deleteRecord(record){
+
+        record.destroyRecord().then(()=>{
+            this.get('notifications').success("Record removed succesfully", {
+                autoClear: true,
+                clearDuration: 2000
+            });
+        }).catch(e => {
+            console.log(e)// eslint-disable-line no-console
+            this.get('notifications').error("Record was not removed!", {
+                autoClear: true,
+                clearDuration: 2000
+            });
+        });    
 
     }
 });

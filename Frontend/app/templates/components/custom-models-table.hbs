@@ -1,12 +1,5 @@
-{{#if error}}
-    <h3 style="color:red">A loading derp has occurred</h3>
-{{/if}}
-{{notification-container position="bottom-left"}}
 
-<div class="container-fluid music-table">
-
-
-{{#models-table class="mt-5" data=model columns=columns themeInstance=themeInstance pageSize=25 pageSizeValues=pageSizeValues as |mt|}}
+{{#models-table class="mt-5" data=data columns=columns themeInstance=themeInstance pageSize=25 as |mt|}}
     {{#mt.table as |table|}}
 
         {{#table.header as |header|}}
@@ -45,19 +38,8 @@
 
     {{#mt.footer as |footer|}}
         {{footer.pagination-simple}}
-        {{footer.size-select }}
+        {{footer.size-select pageSize=25 }}
 
     {{/mt.footer}}
 
 {{/models-table}}
-
-
-
-</div>
-
-
-<div>
-
-
-</div>
-    

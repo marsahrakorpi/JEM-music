@@ -23,14 +23,12 @@ import org.json.JSONObject;
 public class DBConnector {
 	
 	Connection connection = null;
-	Connection relation_connection = null;
 	
 	public DBConnector(){
 				
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			this.connection = DriverManager.getConnection("jdbc:mysql://mariatest.cryajph31jpg.eu-west-3.rds.amazonaws.com:3306/Chinook?user=admin&password=password");
-			this.relation_connection = DriverManager.getConnection("jdbc:mysql://mariatest.cryajph31jpg.eu-west-3.rds.amazonaws.com:3306/Chinook?user=admin&password=password");
 		} catch (SQLException | ClassNotFoundException e) {
 
 			e.printStackTrace();
@@ -47,7 +45,7 @@ public class DBConnector {
 		}
 	}
 	
-	public JSONObject queryDB(String query, String table, Boolean singleRecord) {
+	public JSONObject queryDB(String query, String table, Boolean singleRecord) throws SQLException {
 		
 		/*
 		 * Query Database with given table and sql query string
@@ -241,6 +239,16 @@ public class DBConnector {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+
+			if (stmt != null) {
+				stmt.close();
+			}
+
+			if (connection != null) {
+				connection.close();
+			}
+
 		}
 		
 		
@@ -251,15 +259,7 @@ public class DBConnector {
 		} else {
 			responseObject.put("data", response_array);
 		}
-		
-		//System.out.println(responseObject);
-		try {
-			rs.close();
-			stmt.close();
-			connection.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+
 
 		return responseObject;
 
@@ -267,7 +267,7 @@ public class DBConnector {
 	}
 	
 	public void updateRecord(String table, JSONObject attributes, String recordId) throws SQLException {
-		
+
 		String sql = "UPDATE "+table+" SET ";
 		
 		System.out.println(sql);
@@ -346,44 +346,38 @@ public class DBConnector {
 		}
 	}
 	
+	public void deleteRecord(String table, String recordId) throws SQLException{
 
-	public String queryBuilder (String table, Map<String, String[]> params) {
-
-		String query = "SELECT ";
-		String columns = "", conditions = "", order = "", limit = "", leftJoin = "";
-		List<String> sideload = new ArrayList<String>();
-
+		PreparedStatement stmt = null;
 		
-		Iterator<String> paramsIterator = params.keySet().iterator();
-		while(paramsIterator.hasNext()) {
+		String sql = "DELETE FROM "+table+" WHERE "+table+"Id = ?";
+		
+		try {
+			stmt = connection.prepareStatement(sql);
+			stmt.setInt(1, Integer.parseInt(recordId));
 			
-			String qparam = paramsIterator.next();
-			String[] value = params.get(qparam);
+			stmt.executeUpdate();
 			
-			String combined = qparam+"='"+value[0]+"'";
+		} catch (SQLException e) {
 			
+			System.out.println(e.getMessage());
+			
+		}finally {
+
+			if (stmt != null) {
+				stmt.close();
+			}
+
+			if (connection != null) {
+				connection.close();
+			}
 		}
-		
-		
-		//IF NO COLUMNS
-		if(columns==null || columns=="") {
-			columns = "*"; //select all if no columns given
-		}
 
-		
-		query += columns;
-		query += " FROM "+table;
-		query += leftJoin;
-		//query += conditions;
-		//query += order;
-		query += limit;
-
-		return query;
-		
 	}
+	
 
 
-	public JSONObject testConnection(String table) {
+	public JSONObject testConnection(String table) throws SQLException{
 		Statement stmt = null;
 		String query = "SELECT * FROM "+table+" LIMIT 25;";
 		JSONObject jo = queryDB(query, table, false);
@@ -391,3 +385,15 @@ public class DBConnector {
 	}
 	
 }
+
+
+
+
+
+
+
+
+
+
+
+

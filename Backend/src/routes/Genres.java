@@ -2,6 +2,7 @@ package routes;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -38,8 +39,12 @@ public class Genres extends HttpServlet {
 		
 		DBConnector db = new DBConnector();
 		String sql = "SELECT * FROM Genre";
-		
-		res = db.queryDB(sql, "Genre");
+		Boolean singleRecord = false;
+		try {
+			res = db.queryDB(sql, "Genre", singleRecord);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		response.setContentType("application/json");
 	    response.addHeader("Access-Control-Allow-Origin", "*");
 	    response.addHeader("Access-Control-Allow-Methods", "GET, PUT, POST, OPTIONS, DELETE");

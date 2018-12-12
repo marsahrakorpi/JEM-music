@@ -5,7 +5,6 @@ export default Route.extend({
     jemapi: service(),
     spotify: service(),
 
-    
     init(){
         this._super(...arguments);
         this.get('spotify').authenticate();
@@ -14,6 +13,6 @@ export default Route.extend({
 
         this.get('jemapi').loadAll();
 
-      }
+    }
 
 });

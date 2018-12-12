@@ -3,11 +3,11 @@ import { inject as service } from '@ember/service'
 import $ from 'jquery'
 import ENV from '../config/environment'
 
+
 export default Service.extend({
     store: service(),
-
-    track: null,
-    loading: false,
+    notifications: service('notification-messages'),
+    
     url: ENV.jemapiURL,
 
     init(){
@@ -17,81 +17,84 @@ export default Service.extend({
 
     loadAll(){
         const store = this.get('store');
-        
-        if(localStorage.getItem('tracks') === null) {
-            
-            //me.controllerFor('tracks').set('loading',true);
-            $.ajax({
-                url: ENV.jemapiURL+'/tracks',
-                method: "GET",
-                success: function(res){
-                    localStorage.setItem('tracks', JSON.stringify(res));
-                    store.pushPayload(res)
-                    //me.controllerFor('tracks').set('loading', false);
-                },
-                error: function(err){
-                    //me.controllerFor('tracks').set('loading', false);
-                    //me.controllerFor('tracks').set('error', true);
-                }
-            });
-        } else {
-            store.pushPayload(JSON.parse(localStorage.getItem("tracks")))
-        }
 
-        if(localStorage.getItem('albums') === null) {
-            this.set('albumsLoading', true);
-           // this.controllerFor('albums').loading = true;
-            $.ajax({
-                url: ENV.jemapiURL+'/albums',
-                method: "GET",
-                success: function(res){
-                    localStorage.setItem('albums', JSON.stringify(res));
-                    store.pushPayload(res);
-                    //me.controllerFor('albums').set('loading', false);
-                },
-                error: function(err){
-                    //me.controllerFor('albums').set('loading', false);
-                    this.set('error', err);
-                }
-            });
-        } else {
-            store.pushPayload(JSON.parse(localStorage.getItem("albums")))
-        }
+        $.ajax({
+            url: ENV.jemapiURL+'/tracks',
+            method: "GET",
+            success: function(res){
+                store.pushPayload(res)
+            },
+            error: function(err){
+                console.log(err)// eslint-disable-line no-console
+            }
+        });
 
-        if(localStorage.getItem('artists') === null) {
-            $.ajax({
-                url: ENV.jemapiURL+'/artists',
-                method: "GET",
-                success: function(res){
-                    localStorage.setItem('artists', JSON.stringify(res));
-                    store.pushPayload(res)
-                },
-                error: function(err){
-                    //me.controllerFor('artists').set('loading', false);
-                    //me.controllerFor('artists').set('error', true);
-                }
-            });
-        } else {
-            store.pushPayload(JSON.parse(localStorage.getItem("artists")))
-        }
+        $.ajax({
+            url: ENV.jemapiURL+'/albums',
+            method: "GET",
+            success: function(res){
+                store.pushPayload(res);
+            },
+            error: function(err){
+                console.log(err)// eslint-disable-line no-console
+            }
+        });
 
-        if(localStorage.getItem('genres') === null) {
-            $.ajax({
-                url: ENV.jemapiURL+'/genres',
-                method: "GET",
-                success: function(res){
-                    localStorage.setItem('genres', JSON.stringify(res));
-                    store.pushPayload(res)
-                },
-                error: function(err){
-                   // me.controllerFor('genres').set('loading', false);
-                   // me.controllerFor('genres').set('error', true);
-                }
-            });
-        } else {
-            store.pushPayload(JSON.parse(localStorage.getItem("genres")))
-        }
+        $.ajax({
+            url: ENV.jemapiURL+'/artists',
+            method: "GET",
+            success: function(res){
+                store.pushPayload(res)
+            },
+            error: function(err){
+                console.log(err)// eslint-disable-line no-console
+            }
+        });
+    
 
-        this.set('loading', true)
+        $.ajax({
+            url: ENV.jemapiURL+'/genres',
+            method: "GET",
+            success: function(res){
+                store.pushPayload(res)
+            },
+            error: function(err){
+                console.log(err)// eslint-disable-line no-console
+            }
+        });
+
+    },
+
+    saveRecord(record){
+
+        record.save().then(() => {
+            this.get('notifications').success("Record saved succesfully", {
+                autoClear: true,
+                clearDuration: 2000
+            });
+        }).catch(() => {
+            this.get('notifications').error("Record was not saved!", {
+                autoClear: true,
+                clearDuration: 2000
+            });
+        });         
+
+    },
+
+    deleteRecord(record){
+
+        record.destroyRecord().then(()=>{
+            this.get('notifications').success("Record removed succesfully", {
+                autoClear: true,
+                clearDuration: 2000
+            });
+        }).catch(e => {
+            console.log(e)// eslint-disable-line no-console
+            this.get('notifications').error("Record was not removed!", {
+                autoClear: true,
+                clearDuration: 2000
+            });
+        });    
+
     }
 });

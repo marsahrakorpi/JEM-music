@@ -1,0 +1,42 @@
+<button class="btn btn-outline-primary" {{action "showModal"}}>Edit</button>
+
+{{#if showModal}}
+    {{#bs-modal onSubmit=(action "submit") onHide=(action "close") as |modal|}}
+        {{#modal.header}}
+            <h4 class="modal-title"><i class="glyphicon glyphicon-alert"></i> Edit Track</h4>
+        {{/modal.header}}
+        {{#modal.body}}
+            {{#bs-form onSubmit=(action "submit") as |form|}}
+                {{#form.group }}
+                    <label class="control-label">Name</label>
+                    {{input name="name" class="form-control" value=name type="text" }}
+                    <label class="control-label">Album</label>
+                    {{#power-select 
+                        dropdownClass="in-modal-dropdown" 
+                        renderInPlace=true
+                        options=albums 
+                        selected=album
+                        searchField="name"
+                        onchange=(action (mut album))
+                        as |album|
+                    }}
+                        <p>{{album.name}}</p>
+                    {{/power-select}}
+
+                    <label class="control-label">Track Length (milliseconds)</label>
+                    {{input name="length" class="form-control" value=length type="text" }}
+
+                    <label class="control-label">Composer</label>
+                    {{input name="composer" class="form-control" value=composer type="text" }}
+                    
+                    <label class="control-label">Price</label>
+                    {{input name="price" class="form-control" value=price type="text" }}
+                {{/form.group}}
+            {{/bs-form}}
+        {{/modal.body}}
+        {{#modal.footer as |footer|}}
+            {{#bs-button onClick=(action "close") type="danger"}}Cancel{{/bs-button}}
+            {{#bs-button onClick=(action "submit") type="success"}}Confirm{{/bs-button}}
+        {{/modal.footer}}
+    {{/bs-modal}}
+{{/if}}

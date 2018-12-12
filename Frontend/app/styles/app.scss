@@ -1,5 +1,6 @@
 
 @import "ember-bootstrap/bootstrap";
+//@import "ember-power-select";
 
 /*
 *Writing everything here because im a lazy slob and can't be bothered to import
@@ -133,6 +134,7 @@ body, html {
     position: absolute;
     left: 10px;
 }
+
 .pull-right{
     text-align: left;
     position: absolute;
@@ -179,3 +181,23 @@ body, html {
     min-height: 75%;
     background-color: rgba(177, 177, 177, 0.65);
 }
+
+.in-modal-dropdown {
+    z-index: 2000;
+}
+
+.loading{
+    color:red !important;
+    opacity: 0.3;
+}
+.loaded{
+    opacity: 1;
+}
+
+.top{
+    position: relative;
+    top: 3vh;
+    left: 47vw;
+
+}
+@import "ember-power-select";

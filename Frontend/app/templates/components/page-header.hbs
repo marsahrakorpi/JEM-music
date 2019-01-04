@@ -24,7 +24,12 @@
 
                     </div>
                     <div class="col-xl-3">
-                        {{reload-all-button click=(action "reload")}}
+                         {{#if session.isAuthenticated}}
+
+                         {{else}}
+                            <button>Login</button>
+                         {{/if}}
+                        {{!--reload-all-button click=(action "reload")--}}
                     </div>     
                 </div>
             </div>

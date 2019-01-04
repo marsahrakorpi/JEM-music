@@ -10,7 +10,6 @@ export default Component.extend({
             this.get('router').transitionTo(route);
         },
         reload(){
-            console.log("reload");
             localStorage.removeItem('tracks');
             localStorage.removeItem('albums');
             localStorage.removeItem('artists');

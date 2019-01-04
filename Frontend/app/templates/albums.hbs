@@ -27,8 +27,9 @@
                     {{#each body.visibleContent as |record index|}}
                             {{body.row record=record index=index}}
                         {{#if (exists-in body.expandedItems record)}}
-                            <h1>Tracks in album: {{record.title}} by {{record.name}} </h1>
-                            {{body.row-expand record=record.tracks index=index}}
+                            {{log record}}
+                            <h1>Tracks in album: {{record.Title}} by {{record.Artist.Name}} </h1>
+                            {{body.row-expand record=record.Tracks index=index}}
                         {{/if}}
                     {{/each}}
                 {{else}}

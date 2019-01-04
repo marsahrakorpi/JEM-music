@@ -1,7 +1,6 @@
 import Service from '@ember/service';
 import ENV from '../config/environment'
 import $ from 'jquery'
-import { Promise, resolve, reject } from 'rsvp';
 
 export default Service.extend({
     /*https://developer.spotify.com/documentation/general/guides/authorization-guide/#client-credentials-flow*/
@@ -44,7 +43,6 @@ export default Service.extend({
                 "Authorization": "Bearer "+accessToken
             },
             }).then(res =>{
-                //console.log (res)
                 resolve(res);
             });
         });

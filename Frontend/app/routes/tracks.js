@@ -10,7 +10,9 @@ export default Route.extend({
 
     },
     model(){
-        return this.get('store').peekAll('track');
+        let data = this.get('store').peekAll('track');
+        console.log(data);
+        return data;
     },
 
     actions: {

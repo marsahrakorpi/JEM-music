@@ -1,7 +1,7 @@
 import Controller from '@ember/controller';
 import SemanticUiTheme from '../themes/semanticui';
-import { computed } from '@ember/object';
-import { inject as service } from '@ember/service'
+import { inject as service } from '@ember/service';
+
 export default Controller.extend({
     jemapi: service(),
 
@@ -15,16 +15,9 @@ export default Controller.extend({
         this.columns = [
             {component: 'expand-row', disableFiltering: true, mayBeHidden: false},
             {propertyName: 'id', sortedBy: 'idNumeric'},
-            {propertyName: 'title', title: "Album Title"},
-            {propertyName: 'name', title:"Artist"},
+            {propertyName: 'Title', title: "Album Title"},
+            {propertyName: 'Artist.Name', title:"Artist"},
 
-            /*
-            {component: 'expand-row', disableFiltering: true, mayBeHidden: false},
-            {propertyName: 'id', sortedBy: 'idNumeric'},
-            {propertyName: 'name'},
-            {propertyName: 'colors'},
-            {propertyName: 'combat-specialty'}
-            */
         ];
 
     },

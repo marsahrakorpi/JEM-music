@@ -19,49 +19,16 @@ export default Service.extend({
         const store = this.get('store');
 
         $.ajax({
-            url: ENV.jemapiURL+'/tracks',
+            url: ENV.jemapiURL+'/getAll',
             method: "GET",
             success: function(res){
-                store.pushPayload(res)
+                store.pushPayload(JSON.parse(res))
             },
             error: function(err){
                 console.log(err)// eslint-disable-line no-console
             }
         });
 
-        $.ajax({
-            url: ENV.jemapiURL+'/albums',
-            method: "GET",
-            success: function(res){
-                store.pushPayload(res);
-            },
-            error: function(err){
-                console.log(err)// eslint-disable-line no-console
-            }
-        });
-
-        $.ajax({
-            url: ENV.jemapiURL+'/artists',
-            method: "GET",
-            success: function(res){
-                store.pushPayload(res)
-            },
-            error: function(err){
-                console.log(err)// eslint-disable-line no-console
-            }
-        });
-    
-
-        $.ajax({
-            url: ENV.jemapiURL+'/genres',
-            method: "GET",
-            success: function(res){
-                store.pushPayload(res)
-            },
-            error: function(err){
-                console.log(err)// eslint-disable-line no-console
-            }
-        });
 
     },
 

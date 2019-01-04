@@ -2,23 +2,21 @@ import DS from 'ember-data';
 import { computed } from '@ember/object';
 export default DS.Model.extend({
 
-    bytes: DS.attr(),
-    composer: DS.attr(),
+    Bytes: DS.attr(),
+    Composer: DS.attr(),
     //mediaTypeId: DS.attr(),
-    name: DS.attr(),
+    Name: DS.attr(),
     //title: DS.attr(),
-    price: DS.attr(),
-    milliseconds: DS.attr(),
-    length: computed('milliseconds', function() {
-        let minutes = Math.floor(this.get('milliseconds') / 60000);
-        let seconds = ((this.get('milliseconds') % 60000) / 1000).toFixed(0);
+    Milliseconds: DS.attr(),
+    length: computed('Milliseconds', function() {
+        let minutes = Math.floor(this.get('Milliseconds') / 60000);
+        let seconds = ((this.get('Milliseconds') % 60000) / 1000).toFixed(0);
         return (seconds == 60 ? (minutes+1) + ":00" : minutes + ":" + (seconds < 10 ? "0" : "") + seconds);
     }),
-    trackid: DS.attr(),
-    unitprice: DS.attr(),
-    albumid: DS.attr(),
-    album: DS.belongsTo('album'),
-    artist: DS.belongsTo('artist'),
-    genre: DS.belongsTo('genre'),
+    UnitPrice: DS.attr(),
+    AlbumId: DS.attr(),
+    Album: DS.belongsTo('Album'),
+    Artist: DS.belongsTo('Artist'),
+    Genre: DS.hasMany('Genre'),
 
 });

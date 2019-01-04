@@ -3,6 +3,7 @@
     {{#table.body as |body|}}
         {{#if body.visibleContent.length}}
         {{#each body.visibleContent as |record index|}}
+            {{log record}}
             {{body.row record=record index=index}}
         {{/each}}
         {{else}}

@@ -1,11 +1,10 @@
+
+
+<div class="container-fluid music-table">
 {{#if error}}
     <h3 style="color:red">A loading derp has occurred</h3>
 {{/if}}
 {{notification-container position="bottom-left"}}
-
-<div class="container-fluid music-table">
-
-
 {{#models-table class="mt-5" data=model columns=columns themeInstance=themeInstance pageSize=25 pageSizeValues=pageSizeValues as |mt|}}
     {{#mt.table as |table|}}
 
@@ -31,7 +30,9 @@
                         {{/if}}
                     {{/each}}
                 {{else}}
-                    {{ember-spinner class="top"}}
+                    {{#unless error}}
+                        {{ember-spinner class="top"}}
+                     {{/unless}}
                     {{body.no-data}}
                 {{/if}}
             {{/if}}
@@ -52,12 +53,6 @@
 {{/models-table}}
 
 
-
 </div>
 
-
-<div>
-
-
-</div>
     

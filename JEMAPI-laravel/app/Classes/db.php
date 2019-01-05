@@ -102,7 +102,7 @@ class db {
 
     function getAlbums(){
 
-        $query = "SELECT * FROM Album LEFT JOIN Artist ON Artist.id = Album.ArtistId";
+        $query = "SELECT Album.id, Album.Title, Artist.id AS ArtistId, Artist.Name AS Name FROM Album LEFT JOIN Artist ON Artist.id = Album.ArtistId";
         $sth = $this->dbh->prepare($query);
         $sth->execute();
 

@@ -29,10 +29,10 @@ class JEMController extends BaseController
 
         //albums
         $albums = $this->db->getAlbums();
-        foreach($albums as $album){
+        /*foreach($albums as $album){
             $album->Artist = $album->ArtistId;
             unset($album->Name); //actually artist's name
-        }
+        }*/
         $res->albums = $albums;
         
         $artists = $this->db->getArtists();

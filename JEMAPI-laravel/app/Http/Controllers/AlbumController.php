@@ -32,4 +32,10 @@ class AlbumController extends JEMController
 
         return json_encode($res);
     }
+
+    public function getAlbumArtist($albumId){
+
+        
+
+    }
 }

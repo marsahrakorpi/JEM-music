@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "256ee90e84b9f362746e19df38654349",
+    "content-hash": "a561d21dba5a613d98311e2c66fa48df",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -1998,6 +1998,58 @@
                 "uuid"
             ],
             "time": "2018-07-19T23:38:55+00:00"
+        },
+        {
+            "name": "rbdwllr/reallysimplejwt",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/RobDWaller/ReallySimpleJWT.git",
+                "reference": "fc1a3765379d3e05f00c0c6fc7193144c1332ac5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/RobDWaller/ReallySimpleJWT/zipball/fc1a3765379d3e05f00c0c6fc7193144c1332ac5",
+                "reference": "fc1a3765379d3e05f00c0c6fc7193144c1332ac5",
+                "shasum": ""
+            },
+            "require": {
+                "nesbot/carbon": "^1.20",
+                "php": ">=7.0.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "1.1.*",
+                "phpmd/phpmd": "2.6.*",
+                "phpstan/phpstan": "0.9.*",
+                "phpunit/phpunit": "6.5.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ReallySimpleJWT\\": "src",
+                    "ReallySimpleJWT\\Helper\\": "src/Helper",
+                    "ReallySimpleJWT\\Exception\\": "src/Exception",
+                    "Tests\\": "tests"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rob Waller",
+                    "email": "rdwaller1984@gmail.com"
+                }
+            ],
+            "description": "A really simple library to generate user authentication JSON Web Tokens.",
+            "keywords": [
+                "Authentication",
+                "json",
+                "jwt",
+                "tokens"
+            ],
+            "time": "2018-12-10T17:05:34+00:00"
         },
         {
             "name": "rennokki/larafy",

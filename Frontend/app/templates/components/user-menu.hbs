@@ -1,0 +1,13 @@
+<div onClick={{action "showUserActions"}}>
+<img src="../../default-user-profile.png" class="profile-picture center">
+{{#if user}}
+<h6 style="text-align: center">{{user}}</h6>
+{{/if}}
+
+</div>
+
+{{#if showUserActions}}
+    {{#bs-button onClick=(action "logout") class="logout-button center" type="info"}}Log Out{{/bs-button}}
+{{/if}}
+
+

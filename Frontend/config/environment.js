@@ -6,7 +6,7 @@ module.exports = function(environment) {
     environment,
     rootURL: '/',
     locationType: 'auto',
-    jemapiURL: "http://localhost:8000",
+    jemapiURL: "http://localhost:8000/api",
 
     EmberENV: {
       FEATURES: {

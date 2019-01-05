@@ -17,10 +17,10 @@ export default Component.extend({
         this._super(...arguments);
 
         this.set('id', this.get('record').get('id'));
-        this.set('name', this.get('record').get('name'));
-        this.set('length', this.get('record').get('length'));
-        this.set('composer', this.get('record').get('composer'));
-        this.set('price', this.get('record').get('unitprice'));
+        this.set('name', this.get('record').get('Name'));
+        this.set('length', this.get('record').get('Milliseconds'));
+        this.set('composer', this.get('record').get('Composer'));
+        this.set('price', this.get('record').get('UnitPrice'));
     },
 
     actions: {
@@ -30,14 +30,14 @@ export default Component.extend({
                 let albumsArray = []
                  this.get('store').peekAll('album').map(album =>{
                     let id = album.get('id');
-                    let name = album.get('title');
+                    let name = album.get('Title');
                     albumsArray.push({id:id, name:name})
                 });
                 resolve(albumsArray)
             }).then(albumsArray => {
                 this.set('albums',albumsArray);
-                let albumTitle = this.get('record.album').get('title')
-                let albumId = this.get('record.album').get('id')
+                let albumTitle = this.get('record.Album').get('Title')
+                let albumId = this.get('record.Album').get('id')
                 this.set('album', {id:albumId , name:albumTitle});
             });
             this.set('showModal', true);
@@ -58,18 +58,22 @@ export default Component.extend({
             //let mediaTypeId = this.get('mediatypeid');
             //let genreId = this.get('genreid');
             let composer = this.get('composer');
-            let length = this.minToMs(this.get('length'));
+            let length = this.get('length');
             let price = this.get('price');            
 
             let track = this.store.peekRecord('track', trackid)
-            track.set(track.get('album').get('id'), albumId);
-            track.set('name', name);
-            track.set('albumid', albumId);
-            track.set('composer', composer);
-            track.set('length', length);
-            track.set('unitprice', price);
-            //track.set('title', title);
-            //save track to backend and update store and ls
+
+            //get album relation
+            if(albumId){
+                track.set('Album', this.get('store').peekRecord('album', albumId));
+            }
+            
+
+            track.set('Name', name);
+            track.set('AlbumId', albumId);
+            track.set('Composer', composer);
+            track.set('Milliseconds', length);
+            track.set('UnitPrice', price);
 
             this.get('jemapi').saveRecord(track);
 

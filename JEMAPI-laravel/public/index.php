@@ -56,6 +56,7 @@ $response = $kernel->handle(
 );
 header('Access-Control-Allow-Origin: *');  
 header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS, PATCH');
+header('Access-Control-Allow-Headers: Content-Type');
 $response->send();
 
 $kernel->terminate($request, $response);

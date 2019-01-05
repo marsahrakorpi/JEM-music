@@ -1,5 +1,6 @@
 
 @import "ember-bootstrap/bootstrap";
+@import "pageHeader.scss";
 //@import "ember-power-select";
 
 /*
@@ -149,27 +150,7 @@ body, html {
     width: 450px;
     height:auto;
 }
-.page-header-container{
 
-    padding-top: 1%;
-    padding-bottom: 1%;
-    background-color: rgb(255, 255, 255);
-
-    .row{
-        height:100px;
-    }
-    h5 {
-        position: relative;
-        top:45%;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        font: 17px "Lato", sans-serif;
-        color:#000 ;
-        min-height: 75%;
-
-    }
-      
-}
 .nav-text{
     cursor: pointer;
     height: 100%;
@@ -200,4 +181,20 @@ body, html {
     left: 47vw;
 
 }
+
+.register-container{
+    padding-left: 10%;
+    padding-right: 10%;
+    margin-top: 3%;
+
+}
+
+.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
 @import "ember-power-select";

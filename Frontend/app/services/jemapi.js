@@ -3,7 +3,6 @@ import { inject as service } from '@ember/service'
 import $ from 'jquery'
 import ENV from '../config/environment'
 
-
 export default Service.extend({
     store: service(),
     notifications: service('notification-messages'),
@@ -39,7 +38,8 @@ export default Service.extend({
                 autoClear: true,
                 clearDuration: 2000
             });
-        }).catch(() => {
+        }).catch((e) => {
+            console.log(e);
             this.get('notifications').error("Record was not saved!", {
                 autoClear: true,
                 clearDuration: 2000
@@ -62,6 +62,37 @@ export default Service.extend({
                 clearDuration: 2000
             });
         });    
+
+    },
+
+    validateEmail(email){
+        //w{2,4} allows 2 to 4 letter domain like .info
+        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test(email)){
+            return true;
+        }
+        else {
+            return false;
+        }
+    },
+    registerNewUser(email, password) {
+
+        return new Promise((resolve)=>{
+            $.ajax({
+                url: ENV.jemapiURL+'/register',
+                method: "POST",
+                data: {
+                    "email": email,
+                    "password": password
+                },
+                success: function(){
+                    resolve();
+                },
+                error: function(err){
+                    console.log(err)// eslint-disable-line no-console
+                }
+            });
+        });
+
 
     }
 });

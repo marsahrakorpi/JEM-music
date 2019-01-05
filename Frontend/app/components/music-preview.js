@@ -23,10 +23,19 @@ export default Component.extend({
             *   Tries to peek store for the album
             *   if it's not in the store, find it from backend
             */
-            let album = this.get('store').peekRecord('album', record.get('Album.id'));
 
-            if(!album){
-                album = this.get('store').findRecord('album', this.get('record').AlbumId).then((album)=>{
+            if(record.get('Album') === undefined || record.get('Album') === null){
+                resolve();
+            }
+            
+            let albumid = record.get('Album').get('id');
+            if(albumid === undefined || albumid === null){
+                return;
+            }
+            let album = this.get('store').peekRecord('album', albumid);
+
+            if(!album && albumid){
+                album = this.get('store').findRecord('album', albumid).then((album)=>{
                     resolve(album);
                 }).catch(() => {
                     reject(new Error("Could not find the album for the record"));
@@ -43,6 +52,7 @@ export default Component.extend({
         let track = this.get('spotify').getTrackSingle(record.Name)
 
         track.then(track => {
+
             this.getAlbum(record).then((album)=>{
 
                 this.set('loading', true);

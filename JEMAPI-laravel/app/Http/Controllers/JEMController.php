@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 
 class JEMController extends BaseController
 {
-    protected $db;
+
     private $trackController;
     public function __construct(db $db){
 

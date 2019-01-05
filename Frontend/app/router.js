@@ -12,6 +12,7 @@ Router.map(function() {
   this.route('albums');
   this.route('artists');
   this.route('klan');
+  this.route('register');
 });
 
 export default Router;

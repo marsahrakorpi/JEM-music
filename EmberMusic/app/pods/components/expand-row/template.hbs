@@ -1,0 +1,6 @@
+{{#if isExpanded}}
+  <a href="#" {{action "collapseRow" index record bubbles=false}} class={{themeInstance.collapseRow}}>Hide warbosses</a>
+{{else}}
+  <a href="#" {{action "expandRow" index record bubbles=false}} class={{themeInstance.expandRow}}>Show warbosses</a>
+{{/if}}
+{{yield}}

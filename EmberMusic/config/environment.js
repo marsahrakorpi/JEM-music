@@ -3,7 +3,7 @@
 module.exports = function(environment) {
   let ENV = {
     modulePrefix: 'EmberMusic',
-    podsModulePrefix: 'EmberMusic/pods',
+    podModulePrefix: 'EmberMusic/pods',
     environment,
     rootURL: '/',
     locationType: 'hash',

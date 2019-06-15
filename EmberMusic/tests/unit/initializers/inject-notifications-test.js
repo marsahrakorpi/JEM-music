@@ -1,6 +1,6 @@
 import Application from '@ember/application';
 
-import { initialize } from 'frontend/initializers/inject-notifications';
+import { initialize } from 'EmberMusic/initializers/inject-notifications';
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
 import { run } from '@ember/runloop';

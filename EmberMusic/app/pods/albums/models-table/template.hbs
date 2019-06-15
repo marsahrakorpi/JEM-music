@@ -1,0 +1,45 @@
+{{#models-table class="mt-5" data=data columns=columns themeInstance=themeInstance pageSize=25 expandedRowComponent=(component "albums/expanded-row") as |mt|}}
+    {{#mt.table as |table|}}
+
+        {{#table.header as |header|}}
+        {{#each header.groupedHeaders as |groupedHeader|}}
+            {{header.row-sorting }}
+            {{header.row-filtering filteringIgnoreCase=true}}
+            {{!--header.grouped-header groupedHeader=groupedHeader--}}
+        {{/each}}
+        {{header.row-sorting}}
+        {{header.row-filtering}}
+        {{/table.header}}
+
+        {{#table.body as |body|}}
+            {{#if body.allColumnsAreHidden}}
+                {{body.columns-hidden}}
+            {{else}}
+                {{#if body.visibleContent.length}}
+                    {{#each body.visibleContent as |record index|}}
+                            {{body.row record=record index=index}}
+                        {{#if (exists-in body.expandedItems record)}}
+                            <h1>Tracks in album: {{record.title}} by {{record.artist.name}} </h1>
+                            {{body.row-expand record=record.tracks index=index}}
+                        {{/if}}
+                    {{/each}}
+                {{else}}
+                    {{ember-spinner class="top"}}
+                    {{body.no-data}}
+                {{/if}}
+            {{/if}}
+        {{/table.body}}
+
+    {{#table.footer as |footer|}}
+        {{footer.pagination-numeric}}
+    {{/table.footer}}
+
+    {{/mt.table}}
+
+    {{#mt.footer as |footer|}}
+        {{footer.pagination-simple}}
+        {{footer.size-select pageSize=25 }}
+
+    {{/mt.footer}}
+
+{{/models-table}}

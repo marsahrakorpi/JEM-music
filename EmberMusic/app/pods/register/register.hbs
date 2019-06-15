@@ -1,0 +1,15 @@
+<div class="container register-container">
+    <br>
+    {{#bs-form onSubmit=(action "register") as |form|}}
+
+            {{form.element controlType="email" label="Email" placeholder="Email" property="username" onChange=(action "setEmail") required=true}}
+            {{form.element controlType="password" label="Password" placeholder="Password" property="password"  onChange=(action "setPassword") required=true}}
+            {{bs-button defaultText="Submit" type="primary" buttonType="submit"}}
+            {{#bs-button onClick=(action "cancel") type="danger"}}Cancel{{/bs-button}}
+            {{#if errorMessage}}
+                <p>{{errorMessage}}</p>
+            {{/if}}
+            <br>
+
+    {{/bs-form}}
+</div>

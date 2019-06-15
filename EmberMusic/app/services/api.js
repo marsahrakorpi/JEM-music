@@ -1,5 +1,6 @@
 import Service from '@ember/service';
-import { inject as service } from '@ember/service'
+import { inject as service } from '@ember/service';
+import { get } from '@ember/object';
 import $ from 'jquery'
 import ENV from '../config/environment'
 
@@ -16,19 +17,18 @@ export default Service.extend({
 
     loadAll(){
         const store = this.get('store');
-
         $.ajax({
             url: ENV.apiURL+'/getAll',
             method: "GET",
             success: function(res){
-                store.pushPayload(res)
+                res.forEach(r => {
+                    store.pushPayload(r);
+                })
             },
             error: function(err){
-                console.log(err)// eslint-disable-line no-console
+                throw new Error(err)
             }
         });
-
-
     },
 
     saveRecord(record){
@@ -39,7 +39,7 @@ export default Service.extend({
                 clearDuration: 2000
             });
         }).catch((e) => {
-            console.log(e);
+            throw new Error(e)
             this.get('notifications').error("Record was not saved!", {
                 autoClear: true,
                 clearDuration: 2000
@@ -56,7 +56,7 @@ export default Service.extend({
                 clearDuration: 2000
             });
         }).catch(e => {
-            console.log(e)// eslint-disable-line no-console
+            throw new Error(e)
             this.get('notifications').error("Record was not removed!", {
                 autoClear: true,
                 clearDuration: 2000
@@ -88,7 +88,7 @@ export default Service.extend({
                     resolve();
                 },
                 error: function(err){
-                    console.log(err)// eslint-disable-line no-console
+                    throw new Error(err)
                 }
             });
         });

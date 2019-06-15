@@ -1,8 +1,8 @@
-import Controller from '@ember/controller';
-import SemanticUiTheme from '../themes/semanticui';
+import Component from '@ember/component';
+import SemanticUiTheme from 'EmberMusic/themes/semanticui';
 import { inject as service } from '@ember/service';
 
-export default Controller.extend({
+export default Component.extend({
     api: service(),
 
     themeInstance: SemanticUiTheme.create(),
@@ -15,8 +15,8 @@ export default Controller.extend({
         this.columns = [
             {component: 'expand-row', disableFiltering: true, mayBeHidden: false},
             {propertyName: 'id', sortedBy: 'idNumeric'},
-            {propertyName: 'Title', title: "Album Title"},
-            {propertyName: 'Artist.Name', title:"Artist"},
+            {propertyName: 'title', title: "Album Title"},
+            {propertyName: 'artist.name', title:"Artist"},
 
         ];
 

@@ -1,5 +1,5 @@
 import Component from '@ember/component';
-import SemanticUiTheme from '../themes/semanticui';
+import SemanticUiTheme from 'EmberMusic/themes/semanticui';
 
 export default Component.extend({
 
@@ -10,8 +10,8 @@ export default Component.extend({
       this._super(...arguments);
       this.columns = [
         {propertyName: 'id'},
-        {propertyName: 'Name'},
-        {propertyName: 'UnitPrice'},
+        {propertyName: 'name'},
+        {propertyName: 'unitPrice'},
         {component: 'music-preview'},
       ]
     }

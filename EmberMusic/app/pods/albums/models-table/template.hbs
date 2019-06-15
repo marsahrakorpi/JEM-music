@@ -1,12 +1,4 @@
-{{#if error}}
-    <h3 style="color:red">A loading derp has occurred</h3>
-{{/if}}
-
-<div class="container-fluid music-table">
-    {{table-title "albums"}}
-
-
-{{#models-table class="mt-5" data=model columns=columns themeInstance=themeInstance pageSize=25 expandedRowComponent=(component "expanded-row") as |mt|}}
+{{#models-table class="mt-5" data=data columns=columns themeInstance=themeInstance pageSize=25 expandedRowComponent=(component "albums/expanded-row") as |mt|}}
     {{#mt.table as |table|}}
 
         {{#table.header as |header|}}
@@ -27,8 +19,8 @@
                     {{#each body.visibleContent as |record index|}}
                             {{body.row record=record index=index}}
                         {{#if (exists-in body.expandedItems record)}}
-                            <h1>Tracks in album: {{record.Title}} by {{record.Artist.name}} </h1>
-                            {{body.row-expand record=record.Tracks index=index}}
+                            <h1>Tracks in album: {{record.title}} by {{record.artist.name}} </h1>
+                            {{body.row-expand record=record.tracks index=index}}
                         {{/if}}
                     {{/each}}
                 {{else}}
@@ -51,10 +43,3 @@
     {{/mt.footer}}
 
 {{/models-table}}
-
-</div>
-{{#if loading}}
-    {{loader-icon}}
-{{/if}}
-
-

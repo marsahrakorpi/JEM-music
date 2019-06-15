@@ -186,15 +186,14 @@ module.exports.getAll = (event, context, callback) => {
                 // The whole response has been received. Print out the result.
                 resp.on('end', () => {
 
+                    /*
+                    Enable the one you need, can only run one at a time
+                    */
+                   
                     //convertArtists(data, callback);
                     //convertAlbums(data, callback);
                     //convertTracks(data, callback);
 
-                    //let tracks = data.tracks;
-                    //let artists = data.artists;
-                    //console.log(albums)
-
-                    //callback(null, {statusCode: 200, body: JSON.stringify(data)});
                 });
 
             }).on("error", (err) => {

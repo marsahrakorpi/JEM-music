@@ -1,0 +1,9 @@
+{{#unless loading}}
+    {{#if source}}
+    <audio controls><source src="{{source}}" type="audio/mp3" ></audio>
+    {{else}}
+    <h5>Preview unavailable</h5>
+    {{/if}}
+{{else}}
+    <p>loading...</p>
+{{/unless}}

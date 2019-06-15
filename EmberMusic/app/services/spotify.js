@@ -22,7 +22,7 @@ export default Service.extend({
     authenticate(){
 
         let accessToken = $.ajax({
-            url: ENV.apiURL+"/SpotifyAuthentication",
+            url: ENV.apiURL+"/spotifyAuthentication",
             method: "GET",
         })
   
@@ -32,7 +32,7 @@ export default Service.extend({
     getNewAccessToken(){
         return new Promise(resolve => {
                 $.ajax({
-                    url: ENV.apiURL+"/SpotifyAuthentication",
+                    url: ENV.apiURL+"/spotifyAuthentication",
                     method: "GET",
                 }).then(res => {
                     resolve(res);
@@ -45,7 +45,6 @@ export default Service.extend({
             return;
         }
         let accessToken = this.get('access_token').responseText;
-
         return new Promise(resolve => {
             $.ajax({
             url: "https://api.spotify.com/v1/search?q="+searchTerm+"&type=track&offset=0&limit=20",
@@ -71,7 +70,7 @@ export default Service.extend({
                         })
                     });
                 } else {
-                    console.log(err);
+                    throw new Error(err);
                 }
             });
         });

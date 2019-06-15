@@ -1,0 +1,16 @@
+{{#if error}}
+    <h3 style="color:red">A loading derp has occurred</h3>
+{{/if}}
+
+<div class="container-fluid music-table">
+    {{table-title "albums"}}
+
+
+{{albums/models-table data=model}}
+
+</div>
+{{#if loading}}
+    {{loader-icon}}
+{{/if}}
+
+

@@ -1,8 +1,8 @@
-import Controller from '@ember/controller';
-import SemanticUiTheme from '../themes/semanticui';
+import Component from '@ember/component';
+import SemanticUiTheme from 'EmberMusic/themes/semanticui';
 import { inject as service } from '@ember/service';
 
-export default Controller.extend({
+export default Component.extend({
     api: service(),
     session: service(),
     themeInstance: SemanticUiTheme.extend({table: 'ui sortable selectable table'}).create(),
@@ -15,11 +15,11 @@ export default Controller.extend({
         this._super(...arguments);
         //{propertyName: "id", title:"#"},
         this.columns = [
-            {propertyName: 'Name'},
-            {propertyName: 'Album.Title', title:"Album"},
-            {propertyName: 'Artist.Name', title:"Artist"},
+            {propertyName: 'name', title:"Name"},
+            {propertyName: 'album.title', title:"Album"},
+            {propertyName: 'artist.name', title:"Artist"},
             {propertyName: 'length', tile:"Length", value: length},
-            {propertyName: 'UnitPrice', title:"Price"},
+            {propertyName: 'unitPrice', title:"Price"},
             {component: 'music-preview', title:"Preview"},
         ];
         if(this.get('session').isAuthenticated && this.get('session.data.authenticated.user').firstObject.userlevel === 5){

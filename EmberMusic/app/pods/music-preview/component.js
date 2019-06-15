@@ -1,6 +1,7 @@
 import Component from '@ember/component';
 import { inject as service } from '@ember/service'
 import { Promise, resolve, reject } from 'rsvp';
+import { get, set } from '@ember/object';
 
 export default Component.extend({
     spotify: service(),
@@ -11,9 +12,8 @@ export default Component.extend({
 
     init(){
         this._super(...arguments);
-        this.trackName = this.get('record').Name;
-
-        this.setSource(this.get('record'));
+        this.trackName = get(this,'record.name');
+        this.setSource(get(this,'record'));
 
     },
 
@@ -24,18 +24,18 @@ export default Component.extend({
             *   if it's not in the store, find it from backend
             */
 
-            if(record.get('Album') === undefined || record.get('Album') === null){
+            if(get(record, 'album') === undefined || get(record, 'album') === null){
                 resolve();
             }
             
-            let albumid = record.get('Album').get('id');
+            let albumid = get(record, 'album').get('id');
             if(albumid === undefined || albumid === null){
                 return;
             }
-            let album = this.get('store').peekRecord('album', albumid);
+            let album = get(this, 'store').peekRecord('album', albumid);
 
             if(!album && albumid){
-                album = this.get('store').findRecord('album', albumid).then((album)=>{
+                album = get(this, 'store').findRecord('album', albumid).then((album)=>{
                     resolve(album);
                 }).catch(() => {
                     reject(new Error("Could not find the album for the record"));
@@ -48,36 +48,35 @@ export default Component.extend({
         })
     },
     setSource(){
-        let record = this.get('record');
-        let track = this.get('spotify').getTrackSingle(record.Name)
+        let record = get(this, 'record');
+        let track = get(this, 'spotify').getTrackSingle(record.name)
 
         track.then(track => {
 
             this.getAlbum(record).then((album)=>{
-
-                this.set('loading', true);
-                this.set('spotifyRecordArray', track.tracks.items)
+                set(this, 'loading', true);
+                set(this, 'spotifyRecordArray', track.tracks.items)
         
-                for(var i = 0; i < this.get('spotifyRecordArray').length; i++) {
-                    if (this.get('spotifyRecordArray')[i].album.name.toLowerCase() === album.get('Title').toLowerCase()) {
-                        this.set('spotifyRecord', this.get('spotifyRecordArray')[i]);
+                for(var i = 0; i < get(this,'spotifyRecordArray').length; i++) {
+                    if (get(this,'spotifyRecordArray')[i].album.name.toLowerCase() === album.get('title').toLowerCase()) {
+                        set(this, 'spotifyRecord', get(this, 'spotifyRecordArray')[i]);
                         break; 
                     }
                 }
     
-                if(!this.get('spotifyRecordArray')[0]){
-                    this.set('loading', false)
+                if(!get(this,'spotifyRecordArray')[0]){
+                    set(this, 'loading', false)
                     return
                 }
-                if(this.get('spotifyRecord')!=null){
-                    this.set('source', this.get('spotifyRecord').preview_url);
-                    
+                if(get(this,'spotifyRecord')!=null){
+                    set(this, 'source', get(this, 'spotifyRecord').preview_url);
+                     
                 } else{
                     //HAVING THIS ENABLED WILL SOMETIMES GIVE WRONG RESULTS FOR TRACKS... 
-                    this.set('source', this.get('spotifyRecordArray')[0].preview_url);
+                    set(this, 'source', get(this, 'spotifyRecordArray')[0].preview_url);
                 }
     
-                this.set('loading', false)
+                set(this, 'loading', false)
             })
 
         })

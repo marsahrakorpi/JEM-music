@@ -8,9 +8,11 @@ export default Component.extend({
 
     actions: {
         authenticate() {
+            
             let { identification, password } = this.getProperties('identification', 'password');
+
             get(this, 'session').authenticate('authenticator:oauth2', identification, password).catch((reason) => {
-                set(this, 'errorMessage', reason);
+                set(this, 'errorMessage', reason.error || reason);
             }).then(()=>{
                 set(this, 'showModal', false);
             })

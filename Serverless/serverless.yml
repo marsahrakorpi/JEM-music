@@ -1,12 +1,21 @@
-service: aws-node-rest-api-monkko
+service: aws-node-json-api-monkko
 
 provider:
   name: aws
   runtime: nodejs8.10
 
 functions:
-  createUser:
-    handler: handler.createUser
+
+  login:
+    handler: userHandler.login
+    events:
+      - http:
+          path: login
+          method: post
+          cors: true
+
+  registerUser:
+    handler: userHandler.registerUser
     events:
       - http:
           path: register
@@ -14,7 +23,7 @@ functions:
           cors: true
 
   updateUser:
-    handler: handler.updateUser
+    handler: userHandler.updateUser
     events:
       - http:
           path: user/{id}
@@ -22,7 +31,7 @@ functions:
           cors: true
 
   deleteUser:
-    handler: handler.deleteUser
+    handler: userHandler.deleteUser
     events:
       - http:
           path: user/{id}
@@ -30,7 +39,7 @@ functions:
           cors: true
 
   user:
-    handler: handler.user
+    handler: userHandler.user
     events:
       - http:
           path: user/{id}

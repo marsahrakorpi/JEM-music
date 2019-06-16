@@ -1,6 +1,6 @@
 import Component from '@ember/component';
 import { inject as service } from '@ember/service'
-import { Promise, resolve, reject } from 'rsvp';
+import { Promise } from 'rsvp';
 import { get, set } from '@ember/object';
 
 export default Component.extend({
@@ -18,7 +18,7 @@ export default Component.extend({
     },
 
     getAlbum(record){
-        return new Promise(resolve => {
+        return new Promise((resolve, reject) => {
             /*
             *   Tries to peek store for the album
             *   if it's not in the store, find it from backend

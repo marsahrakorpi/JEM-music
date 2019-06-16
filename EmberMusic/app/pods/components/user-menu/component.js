@@ -5,7 +5,7 @@ import { get, set, computed } from '@ember/object';
 export default Component.extend({
     session: service(),
 
-    user: computed(function(){
+    user: computed('session.data.authenticated.user', function(){
        let user = get(this, 'session.data.authenticated.user.firstname');
        if (user === undefined) {
            user = "Unknown";

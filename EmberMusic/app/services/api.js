@@ -67,23 +67,30 @@ export default Service.extend({
 
     validateEmail(email){
         //w{2,4} allows 2 to 4 letter domain like .info
-        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test(email)){
+        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test(email)){ //eslint-disable-line no-useless-escape
             return true;
         }
         else {
             return false;
         }
     },
-    registerNewUser(email, password) {
+    registerNewUser(email, password, firstname, lastname) {
 
+        if(!email || !password || !firstname || !lastname) throw new Error("missing param for registering user")
+
+        let data = {
+            email:email,
+            password:password,
+            firstname:firstname,
+            lastname:lastname
+        }
         return new Promise((resolve)=>{
             $.ajax({
                 url: ENV.apiURL+'/register',
                 method: "POST",
-                data: {
-                    "email": email,
-                    "password": password
-                },
+                type: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(data),
                 success: function(){
                     resolve();
                 },

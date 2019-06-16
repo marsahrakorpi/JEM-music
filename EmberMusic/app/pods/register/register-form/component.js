@@ -18,9 +18,17 @@ export default Component.extend({
         register(){
             let email = get(this, 'identification');
             let password = get(this, 'password');
-            get(this, 'api').registerNewUser(email, password).then(()=> {
+
+            let firstname = get(this, 'firstname');
+            let lastname = get(this, 'lastname');
+
+            get(this, 'api').registerNewUser(email, password, firstname, lastname).then(()=> {
                 let { identification, password } = this.getProperties('identification', 'password');
-                get(this, 'session').authenticate('authenticator:oauth2', identification, password).catch((reason) => {
+                get(this, 'session').authenticate('authenticator:oauth2', identification, password)
+                .then(()=> {
+                    get(this, 'router').transitionTo('/');
+                })
+                .catch((reason) => {
                     set(this, 'errorMessage', reason);
                 })
             })
@@ -35,6 +43,14 @@ export default Component.extend({
 
         setPassword(p){
             set(this, 'password', p);
+        },
+
+        setFirstname(f){
+            set(this, 'firstname', f);
+        },
+
+        setLastname(l){
+            set(this, 'lastname', l);
         }
     }
     

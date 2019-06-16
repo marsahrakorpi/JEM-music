@@ -1,25 +1,131 @@
 const mongoose = require('mongoose');
 const Promise = require('bluebird');
 const validator = require('validator');
-const UserModel = require('./model/User.js');
+const qs = require('querystring')
+var jwt = require('jsonwebtoken');
+
+var UserModel = require('./model/User');
+
+var User = mongoose.model('User') || mongoose.model('User', UserModel);
 
 mongoose.Promise = Promise;
 
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
-const mongoString = 'mongodb://development:H0yeXSLFynEct39D@testanddev-shard-00-00-l8ijy.mongodb.net:27017,testanddev-shard-00-01-l8ijy.mongodb.net:27017,testanddev-shard-00-02-l8ijy.mongodb.net:27017/next?ssl=true&replicaSet=testanddev-shard-0&authSource=admin'
+//const mongoString = 'mongodb://development:H0yeXSLFynEct39D@testanddev-shard-00-00-l8ijy.mongodb.net:27017,testanddev-shard-00-01-l8ijy.mongodb.net:27017,testanddev-shard-00-02-l8ijy.mongodb.net:27017/next?ssl=true&replicaSet=testanddev-shard-0&authSource=admin'
+const mongoString = "mongodb://master:2PzcYcJxK5S4BpGV@ds125331.mlab.com:25331/serverless-ember"
 const createErrorResponse = (statusCode, message) => ({
   statusCode: statusCode || 501,
   headers: { 'Content-Type': 'text/plain' },
   body: message || 'Incorrect id',
 });
-
 const dbExecute = (db, fn) => db.then(fn).finally(() => db.close());
-
+/*
+var dbExecute = (db, fn) => { 
+  new Promise(resolve => {
+      db.then(fn);
+  }).then(db.close())
+}*/
 function dbConnectAndExecute(dbUrl, fn) {
   return dbExecute(mongoose.connect(dbUrl, { useMongoClient: true }), fn);
 }
+
+module.exports.login = (event, context, callback) => {
+
+  let data = qs.parse(decodeURIComponent(event.body));
+
+  if(data.grant_type != "password") callback(null, createErrorResponse(401, "Invalid grant_type"))
+  if(!data.grant_type) callback(null, createErrorResponse(401, "Request is missing grant_type"))
+  if(!data.username) callback(null, createErrorResponse(401, "Request is missing username"))
+  if(!data.password) callback(null, createErrorResponse(401, "Requesti is missing password"))
+
+  if (!validator.isEmail(data.username)) {
+    callback(null, createErrorResponse(400, 'Incorrect email'));
+    return;
+  }
+
+  dbConnectAndExecute(mongoString, () => (
+    User
+      .find({ email: data.username })
+      .then(user => {
+        if(!user) callback(null, createErrorResponse(401, "Invalid username and/or password"))
+        user = user[0]
+        bcrypt.compare(data.password, user.password, function(err, result) {
+          if(result) {
+            //create jwt
+            let token=jwt.sign(
+              data,
+              'superSecretSecret',
+              {expiresIn: '24h'}
+            )
+            delete(user.password); //do not return user's password :) 
+            callback(null, { statusCode: 200, body: JSON.stringify({access_token:token, user:user}) });
+          }
+          else callback(null, createErrorResponse(401, "Invalid username and/or password"))
+        });
+      })
+      .catch(err => callback(null, createErrorResponse(err.statusCode, err.message)))
+  ));
+
+};
+
+module.exports.registerUser = (event, context, callback) => {
+  console.log(event.body);
+  const data = JSON.parse(event.body);
+
+  if (!validator.isEmail(data.email)) {
+    callback(null, createErrorResponse(400, 'Incorrect email'));
+    return;
+  }
+
+  let promise = new Promise(resolve => {
+    dbConnectAndExecute(mongoString, () => (
+      User
+        .find({ email: data.email })
+        .then(user => {
+          console.log("user?",user);
+          console.log(user.length)
+          if(user.length === 0) resolve()
+          else callback(null, createErrorResponse(409, "User with this email already exists"))
+        })
+        .catch(err => callback(null, createErrorResponse(err.statusCode, err.message)))
+    ));
+  })
+  promise.then(() => {
+    //hash the password
+    bcrypt.genSalt(saltRounds, (err, salt) => {
+      bcrypt.hash(data.password, salt, (err, hash) => {
+        if(err) callback(null, createErrorResponse(501, err))
+        data.password = hash;
+
+        let user = new User({
+          email: data.email,
+          password: data.password,
+          firstname: data.firstname,
+          lastname: data.lastname,
+          ip: event.requestContext.identity.sourceIp,
+        });
+        if (user.validateSync()) {
+          callback(null, createErrorResponse(400, 'Incorrect user data'));
+          return;
+        }
+      
+        dbConnectAndExecute(mongoString, () => (
+          user
+            .save()
+            .then(() => callback(null, {
+              statusCode: 200,
+              body: JSON.stringify({ id: user.id }),
+            }))
+            .catch(err => callback(null, createErrorResponse(err.statusCode, err.message)))
+        ));
+
+      });
+    });
+  })
+
+};
 
 module.exports.user = (event, context, callback) => {
   if (!validator.isAlphanumeric(event.pathParameters.id)) {
@@ -28,69 +134,13 @@ module.exports.user = (event, context, callback) => {
   }
 
   dbConnectAndExecute(mongoString, () => (
-    UserModel
+    User
       .find({ _id: event.pathParameters.id })
       .then(user => callback(null, { statusCode: 200, body: JSON.stringify(user) }))
       .catch(err => callback(null, createErrorResponse(err.statusCode, err.message)))
   ));
 };
 
-
-module.exports.createUser = (event, context, callback) => {
-  const data = JSON.parse(event.body);
-
-  if (!validator.isEmail(event.pathParameters.email)) {
-    callback(null, createErrorResponse(400, 'Incorrect id'));
-    return;
-  }
-
-
-
-  bcrypt.genSalt(saltRounds, function (err, salt) {
-    bcrypt.hash(req.body.password, salt, function (err, hash) {
-      //change req.body plaintext password to hashed to enter into db
-      req.body.password = hash;
-      //insert user data (req.body) into db with hashed pw
-      dbo.collection("users").insertOne(req.body, function (err, result) {
-        if (err) throw err;
-        db.close();
-        res.send({ state: "success" });
-      });
-    });
-  });
-
-
-  dbConnectAndExecute(mongoString, () => (
-    UserModel
-      .find({ _id: event.pathParameters.id })
-      .then(user => callback(null, { statusCode: 200, body: JSON.stringify(user) }))
-      .catch(err => callback(null, createErrorResponse(err.statusCode, err.message)))
-  ));
-
-
-  const user = new UserModel({
-    name: data.name,
-    firstname: data.firstname,
-    birth: data.birth,
-    city: data.city,
-    ip: event.requestContext.identity.sourceIp,
-  });
-
-  if (user.validateSync()) {
-    callback(null, createErrorResponse(400, 'Incorrect user data'));
-    return;
-  }
-
-  dbConnectAndExecute(mongoString, () => (
-    user
-      .save()
-      .then(() => callback(null, {
-        statusCode: 200,
-        body: JSON.stringify({ id: user.id }),
-      }))
-      .catch(err => callback(null, createErrorResponse(err.statusCode, err.message)))
-  ));
-};
 
 module.exports.deleteUser = (event, context, callback) => {
   if (!validator.isAlphanumeric(event.pathParameters.id)) {
@@ -99,7 +149,7 @@ module.exports.deleteUser = (event, context, callback) => {
   }
 
   dbConnectAndExecute(mongoString, () => (
-    UserModel
+    User
       .remove({ _id: event.pathParameters.id })
       .then(() => callback(null, { statusCode: 200, body: JSON.stringify('Ok') }))
       .catch(err => callback(null, createErrorResponse(err.statusCode, err.message)))
@@ -130,7 +180,7 @@ module.exports.updateUser = (event, context, callback) => {
   }
 
   dbConnectAndExecute(mongoString, () => (
-    UserModel.findByIdAndUpdate(id, user)
+    User.findByIdAndUpdate(id, user)
       .then(() => callback(null, { statusCode: 200, body: JSON.stringify('Ok') }))
       .catch(err => callback(err, createErrorResponse(err.statusCode, err.message)))
   ));

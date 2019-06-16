@@ -52,18 +52,15 @@ module.exports.login = (event, context, callback) => {
         if(!user) callback(null, createErrorResponse(401, "Invalid username and/or password"))
         user = user[0]
         bcrypt.compare(data.password, user.password, function(err, result) {
-          console.log(data.password, user.password)
-          console.log("result", result)
           if(result) {
             //create jwt
-            delete(data.password);
             let token=jwt.sign(
               data,
               'superSecretSecret',
               {expiresIn: '24h'}
             )
-            console.log(token);
-            callback(null, { statusCode: 200, body: JSON.stringify({access_token:token}) });
+            delete(user.password); //do not return user's password :) 
+            callback(null, { statusCode: 200, body: JSON.stringify({access_token:token, user:user}) });
           }
           else callback(null, createErrorResponse(401, "Invalid username and/or password"))
         });

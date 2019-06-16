@@ -23,7 +23,8 @@ export default Component.extend({
             {propertyName: 'unitPrice', title:"Price"},
             {component: 'music-preview', title:"Preview"},
         ];
-        if(get(this, 'session').isAuthenticated && get(this, 'session.data.authenticated.user').firstObject.userlevel === 5){
+        console.log(get(this, 'session.data.authenticated'))
+        if(get(this, 'session').isAuthenticated){
             get(this, 'columns').push({component: 'edit-track-row', title:"Edit"})
             get(this, 'columns').push({component: 'delete-track-row', title:"Remove"})
         }

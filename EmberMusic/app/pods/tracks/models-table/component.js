@@ -17,9 +17,9 @@ export default Component.extend({
         //{propertyName: "id", title:"#"},
         this.columns = [
             {propertyName: 'idNumeric', title:"Id"},
-            {propertyName: 'name', title:"Name", "sortDirection": "asc", "sortPrecedence": 1},
+            {propertyName: 'name', title:"Name"},
             {propertyName: 'album.title', title:"Album"},
-            {propertyName: 'artist.name', title:"Artist"},
+            {propertyName: 'artist.name', title:"Artist", "sortDirection": "asc", "sortPrecedence": 1},
             {propertyName: 'length', tile:"Length", value: length},
             {propertyName: 'unitPrice', title:"Price"},
             {component: 'music-preview', title:"Preview"},

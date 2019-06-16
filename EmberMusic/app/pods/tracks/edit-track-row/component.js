@@ -16,11 +16,11 @@ export default Component.extend({
 
         this._super(...arguments);
 
-        set(this, 'id', get(this, 'record').get('id'));
-        set(this, 'name', get(this, 'record').get('Name'));
-        set(this, 'length', get(this, 'record').get('Milliseconds'));
-        set(this, 'composer', get(this, 'record').get('Composer'));
-        set(this, 'price', get(this, 'record').get('UnitPrice'));
+        set(this, 'id', get(this, 'record.id'));
+        set(this, 'name', get(this, 'record.name'));
+        set(this, 'length', get(this, 'record.milliseconds'));
+        set(this, 'composer', get(this, 'record.composer'));
+        set(this, 'price', get(this, 'record.unitPrice'));
     },
 
     actions: {
@@ -30,14 +30,14 @@ export default Component.extend({
                 let albumsArray = []
                  get(this, 'store').peekAll('album').map(album =>{
                     let id = album.get('id');
-                    let name = album.get('Title');
+                    let name = album.get('title');
                     albumsArray.push({id:id, name:name})
                 });
                 resolve(albumsArray)
             }).then(albumsArray => {
                 set(this, 'albums',albumsArray);
-                let albumTitle = get(this, 'record.Album').get('Title')
-                let albumId = get(this, 'record.Album').get('id')
+                let albumTitle = get(this, 'record.album.title')
+                let albumId = get(this, 'record.album.id')
                 set(this, 'album', {id:albumId , name:albumTitle});
             });
             set(this, 'showModal', true);
@@ -65,15 +65,14 @@ export default Component.extend({
 
             //get album relation
             if(albumId){
-                track.set('Album', get(this, 'store').peekRecord('album', albumId));
+                set(track, 'album', get(this, 'store').peekRecord('album', albumId));
             }
             
 
-            track.set('Name', name);
-            track.set('AlbumId', albumId);
-            track.set('Composer', composer);
-            track.set('Milliseconds', length);
-            track.set('UnitPrice', price);
+            track.set('name', name);
+            track.set('composer', composer);
+            track.set('milliseconds', length);
+            track.set('unitPrice', price);
 
             get(this, 'api').saveRecord(track);
 

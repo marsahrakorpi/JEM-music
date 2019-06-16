@@ -33,24 +33,27 @@ export default Service.extend({
 
     saveRecord(record){
 
-        record.save().then(() => {
-            get(this, 'notifications').success("Record saved succesfully", {
-                autoClear: true,
-                clearDuration: 2000
+        return new Promise((resolve, reject) => {
+            record.save().then((record) => {
+                get(this, 'notifications').success("Record saved succesfully", {
+                    autoClear: true,
+                    clearDuration: 2000
+                });
+                resolve(record)
+            }).catch((e) => {
+                get(this, 'notifications').error("Record was not saved!", {
+                    autoClear: true,
+                    clearDuration: 2000
+                });
+                reject(e);
             });
-        }).catch((e) => {
-            get(this, 'notifications').error("Record was not saved!", {
-                autoClear: true,
-                clearDuration: 2000
-            });
-            throw new Error(e)
-        });         
+        })         
 
     },
 
     deleteRecord(record){
 
-        record.destroyRecord().then(()=>{
+        record.destroyRecord(record).then(()=>{
             get(this, 'notifications').success("Record removed succesfully", {
                 autoClear: true,
                 clearDuration: 2000

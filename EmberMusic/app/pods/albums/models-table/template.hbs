@@ -24,7 +24,9 @@
                         {{/if}}
                     {{/each}}
                 {{else}}
-                    {{ember-spinner class="top"}}
+                    {{#unless (await data)}}
+                        {{ember-spinner class="top"}}
+                    {{/unless}}
                     {{body.no-data}}
                 {{/if}}
             {{/if}}

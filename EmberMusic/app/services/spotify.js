@@ -2,7 +2,7 @@ import Service from '@ember/service';
 import ENV from '../config/environment'
 import $ from 'jquery'
 import { run } from '@ember/runloop'
-
+import { get, set } from '@ember/object';
 export default Service.extend({
     /*https://developer.spotify.com/documentation/general/guides/authorization-guide/#client-credentials-flow*/
 /*
@@ -26,7 +26,7 @@ export default Service.extend({
             method: "GET",
         })
   
-        this.set('access_token', accessToken);
+        set(this, 'access_token', accessToken);
      
     },
     getNewAccessToken(){
@@ -44,7 +44,7 @@ export default Service.extend({
         if(!searchTerm ||searchTerm === ""){
             return;
         }
-        let accessToken = this.get('access_token').responseText;
+        let accessToken = get(this, 'access_token').responseText;
         return new Promise(resolve => {
             $.ajax({
             url: "https://api.spotify.com/v1/search?q="+searchTerm+"&type=track&offset=0&limit=20",
@@ -65,7 +65,7 @@ export default Service.extend({
                         },
                     }).then(res => {
                         run(()=>{
-                            this.set('access_token', accessToken);
+                            set(this, 'access_token', accessToken);
                             resolve(res)
                         })
                     });

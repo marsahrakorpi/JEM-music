@@ -5,6 +5,9 @@ const UserModel = require('./model/User.js');
 
 mongoose.Promise = Promise;
 
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+
 const mongoString = 'mongodb://development:H0yeXSLFynEct39D@testanddev-shard-00-00-l8ijy.mongodb.net:27017,testanddev-shard-00-01-l8ijy.mongodb.net:27017,testanddev-shard-00-02-l8ijy.mongodb.net:27017/next?ssl=true&replicaSet=testanddev-shard-0&authSource=admin'
 const createErrorResponse = (statusCode, message) => ({
   statusCode: statusCode || 501,
@@ -35,6 +38,35 @@ module.exports.user = (event, context, callback) => {
 
 module.exports.createUser = (event, context, callback) => {
   const data = JSON.parse(event.body);
+
+  if (!validator.isEmail(event.pathParameters.email)) {
+    callback(null, createErrorResponse(400, 'Incorrect id'));
+    return;
+  }
+
+
+
+  bcrypt.genSalt(saltRounds, function (err, salt) {
+    bcrypt.hash(req.body.password, salt, function (err, hash) {
+      //change req.body plaintext password to hashed to enter into db
+      req.body.password = hash;
+      //insert user data (req.body) into db with hashed pw
+      dbo.collection("users").insertOne(req.body, function (err, result) {
+        if (err) throw err;
+        db.close();
+        res.send({ state: "success" });
+      });
+    });
+  });
+
+
+  dbConnectAndExecute(mongoString, () => (
+    UserModel
+      .find({ _id: event.pathParameters.id })
+      .then(user => callback(null, { statusCode: 200, body: JSON.stringify(user) }))
+      .catch(err => callback(null, createErrorResponse(err.statusCode, err.message)))
+  ));
+
 
   const user = new UserModel({
     name: data.name,

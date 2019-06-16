@@ -1,5 +1,6 @@
 import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service'
+import { get } from '@ember/object';
 
 export default Route.extend({
     api: service(),
@@ -7,11 +8,11 @@ export default Route.extend({
 
     init(){
         this._super(...arguments);
-        this.get('spotify').authenticate();
+        get(this, 'spotify').authenticate();
     },
     beforeModel(){
 
-        this.get('api').loadAll();
+        get(this, 'api').loadAll();
 
     }
 

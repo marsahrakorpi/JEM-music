@@ -1,5 +1,6 @@
 import Component from '@ember/component';
 import { inject as service } from '@ember/service';
+import { get, set } from '@ember/object';
 
 export default Component.extend({
     api: service(),
@@ -8,22 +9,22 @@ export default Component.extend({
     store: service(),
     actions: {
         transitionTo(route) {
-            this.get('router').transitionTo(route);
+            get(this, 'router').transitionTo(route);
         },
         reload() {
             localStorage.removeItem('tracks');
             localStorage.removeItem('albums');
             localStorage.removeItem('artists');
             localStorage.removeItem('genres');
-            this.get('store').unloadAll();
-            this.get('api').loadAll();
+            get(this, 'store').unloadAll();
+            get(this, 'api').loadAll();
         },
         showLoginModal() {
-            this.set('showModal', true);
+            set(this, 'showModal', true);
         },
 
         closeLoginModal() {
-            this.set('showModal', false);
+            set(this, 'showModal', false);
         }
     }
 });

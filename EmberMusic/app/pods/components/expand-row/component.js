@@ -1,14 +1,16 @@
 import Component from '@ember/component';
+import { get, set } from '@ember/object';
+
 export default Component.extend({
 
     actions: {
         collapseRow(index, record) {
-          this.set('isExpanded', false)
-          this.get('collapseRow')(index, record);
+          set(this, 'isExpanded', false)
+          get(this, 'collapseRow')(index, record);
         },
         expandRow(index, record) {
-          this.set('isExpanded', true)
-          this.get('expandRow')(index, record);
+          set(this, 'isExpanded', true)
+          get(this, 'expandRow')(index, record);
         }
       }
       

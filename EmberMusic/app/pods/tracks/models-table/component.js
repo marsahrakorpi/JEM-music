@@ -1,6 +1,7 @@
 import Component from '@ember/component';
 import SemanticUiTheme from 'EmberMusic/themes/semanticui';
 import { inject as service } from '@ember/service';
+import { get } from '@ember/object';
 
 export default Component.extend({
     api: service(),
@@ -22,9 +23,9 @@ export default Component.extend({
             {propertyName: 'unitPrice', title:"Price"},
             {component: 'music-preview', title:"Preview"},
         ];
-        if(this.get('session').isAuthenticated && this.get('session.data.authenticated.user').firstObject.userlevel === 5){
-            this.get('columns').push({component: 'edit-track-row', title:"Edit"})
-            this.get('columns').push({component: 'delete-track-row', title:"Remove"})
+        if(get(this, 'session').isAuthenticated && get(this, 'session.data.authenticated.user').firstObject.userlevel === 5){
+            get(this, 'columns').push({component: 'edit-track-row', title:"Edit"})
+            get(this, 'columns').push({component: 'delete-track-row', title:"Remove"})
         }
         this.pageSizeValues = [10, 25, 50, 100, 200];
 

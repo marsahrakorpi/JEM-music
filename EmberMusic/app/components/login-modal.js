@@ -1,5 +1,7 @@
 import Component from '@ember/component';
 import { inject as service } from '@ember/service';
+import { get, set } from '@ember/object';
+
 export default Component.extend({
     session: service(),
     router: service(),
@@ -7,18 +9,18 @@ export default Component.extend({
     actions: {
         authenticate() {
             let { identification, password } = this.getProperties('identification', 'password');
-            this.get('session').authenticate('authenticator:oauth2', identification, password).catch((reason) => {
-                this.set('errorMessage', reason);
+            get(this, 'session').authenticate('authenticator:oauth2', identification, password).catch((reason) => {
+                set(this, 'errorMessage', reason);
             }).then(()=>{
-                this.set('showModal', false);
+                set(this, 'showModal', false);
             })
         },
         closeLoginModal() {
-            this.set('showModal', false);
+            set(this, 'showModal', false);
         },
         registerNew(){
-            this.set('showModal', false);
-            this.get('router').transitionTo('/register');
+            set(this, 'showModal', false);
+            get(this, 'router').transitionTo('/register');
         }
     }
 });

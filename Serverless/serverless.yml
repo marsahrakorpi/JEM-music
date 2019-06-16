@@ -9,7 +9,7 @@ functions:
     handler: handler.createUser
     events:
       - http:
-          path: user
+          path: register
           method: post
           cors: true
 

@@ -16,7 +16,7 @@ export default Service.extend({
     },
 
     loadAll(){
-        const store = this.get('store');
+        const store = get(this, 'store');
         $.ajax({
             url: ENV.apiURL+'/getAll',
             method: "GET",
@@ -34,16 +34,16 @@ export default Service.extend({
     saveRecord(record){
 
         record.save().then(() => {
-            this.get('notifications').success("Record saved succesfully", {
+            get(this, 'notifications').success("Record saved succesfully", {
                 autoClear: true,
                 clearDuration: 2000
             });
         }).catch((e) => {
-            throw new Error(e)
-            this.get('notifications').error("Record was not saved!", {
+            get(this, 'notifications').error("Record was not saved!", {
                 autoClear: true,
                 clearDuration: 2000
             });
+            throw new Error(e)
         });         
 
     },
@@ -51,16 +51,16 @@ export default Service.extend({
     deleteRecord(record){
 
         record.destroyRecord().then(()=>{
-            this.get('notifications').success("Record removed succesfully", {
+            get(this, 'notifications').success("Record removed succesfully", {
                 autoClear: true,
                 clearDuration: 2000
             });
         }).catch(e => {
-            throw new Error(e)
-            this.get('notifications').error("Record was not removed!", {
+            get(this, 'notifications').error("Record was not removed!", {
                 autoClear: true,
                 clearDuration: 2000
             });
+            throw new Error(e)
         });    
 
     },

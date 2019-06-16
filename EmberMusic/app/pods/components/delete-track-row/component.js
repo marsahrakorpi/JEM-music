@@ -1,31 +1,33 @@
 import Component from '@ember/component';
 import { inject as service } from '@ember/service'
+import { get, set } from '@ember/object';
+
 export default Component.extend({
     api: service(),
     store: service(),
     init(){
         this._super(...arguments);
 
-        this.set('id', this.get('record.id'));
+        set(this, 'id', get(this, 'record.id'));
 
     },
 
     actions:{
         showModal(){
-            this.set('showModal', true);
+            set(this, 'showModal', true);
         },
         close(){
-            this.set('showModal', false)
+            set(this, 'showModal', false)
         },
 
         submit(){
-            let id = this.get('id');
+            let id = get(this, 'id');
 
-            let track = this.get('store').peekRecord('track', id, {backgroundReload: false})
+            let track = get(this, 'store').peekRecord('track', id, {backgroundReload: false})
 
-            this.get('api').deleteRecord(track);
+            get(this, 'api').deleteRecord(track);
 
-            this.set('showModal', false);
+            set(this, 'showModal', false);
         }
     
     }

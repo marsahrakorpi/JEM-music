@@ -1,13 +1,23 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const Schema = mongoose.Schema;
 
-const model = mongoose.model('User', {
-  name: {
+const UserSchema = new Schema({
+  email: {
     type: String,
     required: true,
     validate: {
-      validator(name) {
-        return validator.isAlphanumeric(name);
+      validator(email) {
+        return validator.isEmail(email);
+      }
+    }
+  },
+  password: {
+    type: String,
+    required: true,
+    validate: {
+      validator(password) {
+        return validator.contains(password, '$2b');
       },
     },
   },
@@ -15,23 +25,19 @@ const model = mongoose.model('User', {
     type: String,
     required: true,
     validate: {
-      validator(firstname) {
+      validator(firstname){
         return validator.isAlphanumeric(firstname);
-      },
-    },
+      }
+    }
   },
-  birth: {
-    type: Date,
-    required: true,
-  },
-  city: {
+  lastname: {
     type: String,
     required: true,
     validate: {
-      validator(city) {
-        return validator.isAlphanumeric(city);
-      },
-    },
+      validator(lastname){
+        return validator.isAlphanumeric(lastname);
+      }
+    }
   },
   ip: {
     type: String,
@@ -44,4 +50,4 @@ const model = mongoose.model('User', {
   },
 });
 
-module.exports = model;
+module.exports = mongoose.models.User || mongoose.model('User', UserSchema);  

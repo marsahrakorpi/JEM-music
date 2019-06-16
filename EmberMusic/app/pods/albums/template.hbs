@@ -5,12 +5,6 @@
 <div class="container-fluid music-table">
     {{table-title "albums"}}
 
-
-{{albums/models-table data=model}}
-
+    {{albums/models-table data=model}}
 </div>
-{{#if loading}}
-    {{loader-icon}}
-{{/if}}
-
 

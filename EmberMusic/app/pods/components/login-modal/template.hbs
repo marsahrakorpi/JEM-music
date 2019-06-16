@@ -7,10 +7,10 @@
             {{#form.group }}
 
                 <label for="identification" class="control-label">Login Email</label>
-                {{input id='username' class="form-control" placeholder='Enter Email' value=identification}}
+                {{input id='username' class="form-control" placeholder='Enter Email' value=identification required=true}}
                 <br>
                 <label for="password" class="control-label">Password</label>
-                {{input id='password' class="form-control" placeholder='Enter Password' type='password' value=password}}
+                {{input id='password' class="form-control" placeholder='Enter Password' type='password' value=password required=true}}
 
                 {{#if errorMessage}}
                     <p>{{!--errorMessage--}}</p>

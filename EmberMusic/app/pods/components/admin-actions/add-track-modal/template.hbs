@@ -1,0 +1,58 @@
+{{yield}}
+
+{{#bs-modal onSubmit=(action "addTrack") onHide=(action "close") as |modal|}}
+    {{#modal.header}}
+        <h4 class="modal-title"><i class="glyphicon glyphicon-alert"></i> Log In</h4>
+    {{/modal.header}}
+    {{#modal.body}}
+        {{#bs-form onSubmit=(action "addTrack") as |form|}}
+            {{#form.group }}
+
+                    <label class="control-label">Name</label>
+                    {{input name="name" class="form-control" value=name type="text" }}
+                    <label class="control-label">Album</label>
+                    {{#power-select 
+                        dropdownClass="in-modal-dropdown" 
+                        renderInPlace=true
+                        options=albums
+                        selected=selectedAlbum
+                        searchField="name"
+                        onchange=(action (mut album))
+                        as |album|
+                    }}
+                    <p>{{album.name}}</p>
+                    {{/power-select}}
+
+                    <label class="control-label">Artist</label>
+                    {{#power-select 
+                        dropdownClass="in-modal-dropdown" 
+                        renderInPlace=true
+                        options=artists 
+                        selected=selectedArtist
+                        searchField="name"
+                        onchange=(action (mut artist))
+                        as |artist|
+                    }}
+                    <p>{{artist.name}}</p>
+                    {{/power-select}}
+
+                    <label class="control-label">Track Length (milliseconds)</label>
+                    {{input name="length" class="form-control" value=length type="text" }}
+
+                    <label class="control-label">Track Size (bytes)</label>
+                    {{input name="bytes" class="form-control" value=bytes type="text" }}
+
+                    <label class="control-label">Composer</label>
+                    {{input name="composer" class="form-control" value=composer type="text" }}
+                    
+                    <label class="control-label">Price</label>
+                    {{input name="price" class="form-control" value=price type="text" }}
+
+            {{/form.group}}
+        {{/bs-form}}
+    {{/modal.body}}
+    {{#modal.footer as |footer|}}
+        {{#bs-button onClick=(action "close") type="danger"}}Cancel{{/bs-button}}
+        {{#bs-button onClick=(action "addTrack") type="success"}}Add Track{{/bs-button}}
+    {{/modal.footer}}
+{{/bs-modal}}

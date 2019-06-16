@@ -62,6 +62,30 @@ functions:
           method: get
           cors: true
 
+  editTrack:
+    handler: musicHandler.editTrack
+    events:
+      - http:
+          path: tracks/{id}
+          method: put
+          cors: true
+
+  addTrack:
+    handler: musicHandler.addTrack
+    events:
+      - http:
+          path: tracks
+          method: post
+          cors: true
+
+  removeTrack:
+    handler: musicHandler.removeTrack
+    events:
+      - http:
+          path: tracks/{id}
+          method: delete
+          cors: true
+
   spotifyAuthentication:
     handler: spotifyHandler.authenticate
     events:

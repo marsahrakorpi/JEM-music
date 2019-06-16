@@ -16,17 +16,18 @@ export default Component.extend({
         this._super(...arguments);
         //{propertyName: "id", title:"#"},
         this.columns = [
-            {propertyName: 'name', title:"Name"},
+            {propertyName: 'idNumeric', title:"Id"},
+            {propertyName: 'name', title:"Name", "sortDirection": "asc", "sortPrecedence": 1},
             {propertyName: 'album.title', title:"Album"},
             {propertyName: 'artist.name', title:"Artist"},
             {propertyName: 'length', tile:"Length", value: length},
             {propertyName: 'unitPrice', title:"Price"},
             {component: 'music-preview', title:"Preview"},
         ];
-        console.log(get(this, 'session.data.authenticated'))
+
         if(get(this, 'session').isAuthenticated){
-            get(this, 'columns').push({component: 'edit-track-row', title:"Edit"})
-            get(this, 'columns').push({component: 'delete-track-row', title:"Remove"})
+            get(this, 'columns').push({component: 'tracks/edit-track-row', title:"Edit"})
+            get(this, 'columns').push({component: 'tracks/delete-track-row', title:"Remove"})
         }
         this.pageSizeValues = [10, 25, 50, 100, 200];
 

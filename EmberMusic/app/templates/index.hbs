@@ -23,7 +23,7 @@
             </div>
             </div>-->
         <div class="caption">
-            <span class="border">JEM-Music</span>
+            <span class="border">EMBER MUSIC</span>
             
         </div>
     </div>
@@ -41,13 +41,13 @@
             </div>
             <div class="row" >
                     <div class="col-sm text-center nav-text" >
-                        {{#link-to "tracks"}}TRACKS{{/link-to}}
+                        {{#link-to "tracks" }}TRACKS{{/link-to}}
                     </div>
                     <div class="col-sm text-center nav-text" {{action "transitionTo" "albums"}}>
-                        ALBUMS
+                        {{#link-to "albums"}}ALBUMS{{/link-to}}
                     </div>
                     <div class="col-sm text-center nav-text" {{action "transitionTo" "artists"}}>
-                        ARTISTS
+                        {{#link-to "artists"}}ARTISTS{{/link-to}}
                     </div>
             </div>
     </div>

@@ -146,9 +146,11 @@ body, html {
 }
 
 .page-logo{
-    margin-left: 3%;
-    width: 450px;
+    margin-left: 3vw;
+    margin-top: 2vh;
+    width: 250px;
     height:auto;
+    cursor: pointer;
 }
 
 .nav-text{
@@ -157,6 +159,16 @@ body, html {
     //background-color: #fff;
     -webkit-transition: background-color 0.5s; /* Safari */
     transition: background-color 0.5s;
+}
+.nav-text {
+    a {
+        text-decoration: none;
+        color: #777;
+    }
+
+    a:hover {
+        background-color: transparent;
+    }
 }
 .nav-text:hover{
     min-height: 75%;

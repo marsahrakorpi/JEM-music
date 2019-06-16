@@ -4,7 +4,7 @@ import { get } from '@ember/object';
 
 export default Route.extend({
     api: service('api'),
-
+    session: service(),
     init(){
         this._super(...arguments);
 

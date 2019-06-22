@@ -2,13 +2,13 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const Schema = mongoose.Schema;
 
-const ArtistSchema = new Schema({
+const MediaTypeSchema = new Schema({
     type: {
         type: String,
         required: true
     },
     attributes: {
-        artistId: {
+        mediaTypeId: {
             type: String,
             required: true
         },
@@ -22,4 +22,4 @@ const ArtistSchema = new Schema({
 },
 );
 
-module.exports = mongoose.models.Artist || mongoose.model('Artist', ArtistSchema);  
+module.exports = mongoose.models.MediaType || mongoose.model('MediaType', MediaTypeSchema);  

@@ -45,6 +45,7 @@
     "ember-promise-helpers": "^1.0.6",
     "ember-resolver": "^4.0.0",
     "ember-simple-auth": "^1.7.0",
+    "ember-simple-auth-token": "^4.0.7",
     "ember-source": "~3.2.0",
     "ember-welcome-page": "^3.0.0",
     "eslint-plugin-ember": "^5.0.0",

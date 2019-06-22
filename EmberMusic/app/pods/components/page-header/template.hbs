@@ -25,7 +25,7 @@
                     </div>
                     <div class="col-xl-4 profile-controls">
                          {{#if session.isAuthenticated}}
-                            {{user-menu}}
+                            {{page-header/user-menu }}
                          {{else}}
                             {{#bs-button onClick=(action "showLoginModal") class="login-button center" type="success"}}Log In{{/bs-button}}
                          {{/if}}
@@ -38,5 +38,5 @@
 </div>
 
 {{#if showModal}}
-    {{login-modal showModal=showModal}}
+    {{page-header/login-modal showModal=showModal}}
 {{/if}}

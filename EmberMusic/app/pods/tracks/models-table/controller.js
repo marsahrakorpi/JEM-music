@@ -1,7 +1,7 @@
 import Component from '@ember/component';
 import SemanticUiTheme from 'EmberMusic/themes/semanticui';
 import { inject as service } from '@ember/service';
-import { get, set, computed } from '@ember/object';
+import { get } from '@ember/object';
 
 export default Component.extend({
     api: service(),
@@ -12,54 +12,38 @@ export default Component.extend({
     pageSizeValues: null,
     data: null,
 
-    spotify:true,
+    queryParams: ["limit", "page"],
 
-    totalPages: computed('totalRecords', 'limit', function(){
-        let total = get(this,'totalRecords');
-        let limit = get(this, 'limit');
-        return Math.ceil(total/limit);
-    }),
+    limit:50,
+    page: 1,
 
-    firstIndex: computed('page', 'limit', function(){
-        let limit = get(this, 'limit');
-        let page = get(this, 'page');
-        let firstIndex = (limit*page) - limit + 1 ;
-        return firstIndex;
-    }),
-    lastIndex: computed('page', 'limit', function(){
-        let limit = get(this, 'limit');
-        let page = get(this, 'page');
-        let lastIndex = (limit*page)
-        return lastIndex;
-    }),
+    spotify:false,
 
     init(){
         this._super(...arguments);
         //{propertyName: "id", title:"#"},
         this.columns = [
+            {propertyName: 'idNumeric', title:"Id"},
             {propertyName: 'name', title:"Name"},
             {propertyName: 'album.title', title:"Album"},
-            {propertyName: 'album.artist.name', title:"Artist", "sortDirection": "asc", "sortPrecedence": 1},
+            {propertyName: 'album.name', title:"Artist", "sortDirection": "asc", "sortPrecedence": 1},
             {propertyName: 'length', title:"Length", value: length},
             {propertyName: 'genre.name', title: "Genre"},
             {propertyName: 'unitPrice', title:"Price"},
         ];
 
+        if(get(this, 'spotify')!=false) get(this, 'columns').push({component: 'music-preview', title:"Preview"},)
         if(get(this, 'session').isAuthenticated){
-            get(this, 'columns').push({component: 'music-preview', title:"Preview"})
             get(this, 'columns').push({component: 'tracks/edit-track-row', title:"Edit"})
             get(this, 'columns').push({component: 'tracks/delete-track-row', title:"Remove"})
         }
         this.pageSizeValues = [10, 25, 50, 100, 200];
+
     },
 
     actions: {
         transitionTo(){
             this.transitionToRoute('/') 
-        },
-
-        goToPage(page){
-            set(this, 'page', page)
         }
     }
 

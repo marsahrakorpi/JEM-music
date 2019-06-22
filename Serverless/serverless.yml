@@ -62,6 +62,38 @@ functions:
           method: get
           cors: true
 
+
+
+  album:
+    handler: musicHandler.album
+    events:
+      - http:
+          path: albums/{id}
+          method: get
+          cors: true
+  artist:
+    handler: musicHandler.artist
+    events:
+      - http:
+          path: artists/{id}
+          method: get
+          cors: true
+  genre:
+    handler: musicHandler.genre
+    events:
+      - http:
+          path: genres/{id}
+          method: get
+          cors: true
+  mediaType:
+    handler: musicHandler.mediaType
+    events:
+      - http:
+          path: mediaTypes/{id}
+          method: get
+          cors: true
+
+
   editTrack:
     handler: musicHandler.editTrack
     events:
@@ -93,5 +125,14 @@ functions:
           path: spotifyAuthentication
           method: get
           cors: true
+
+  mysql:
+    handler: mysqlHandler.mysql
+    events:
+      - http:
+          path: mysql
+          method: get
+          cors: true
+
 plugins:
   - serverless-offline

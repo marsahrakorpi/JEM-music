@@ -5,12 +5,23 @@ import { get } from '@ember/object';
 export default Route.extend({
     api: service('api'),
     session: service(),
-    init(){
-        this._super(...arguments);
 
+    queryParams: {
+        limit: {
+            refreshModel: true
+        },
+        order: {
+            refreshModel: true
+        },
+        page: {
+            refreshModel: true
+        }
     },
-    model(){
-        return get(this, 'store').peekAll('track');
+
+    model(params){
+        console.log(params);
+
+        return get(this, 'store').query('track', params, {include: 'artist'});
     },
 
     actions: {

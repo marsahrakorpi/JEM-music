@@ -27,13 +27,17 @@ module.exports = function(environment) {
     }
   };
 
+
   if (environment === 'development') {
     // ENV.APP.LOG_RESOLVER = true;
     // ENV.APP.LOG_ACTIVE_GENERATION = true;
     // ENV.APP.LOG_TRANSITIONS = true;
     // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
     // ENV.APP.LOG_VIEW_LOOKUPS = true;
-
+    ENV['ember-simple-auth-token'] = {
+      refreshAccessTokens: true,
+      refreshLeeway: 3000 // refresh 5 minutes (300 seconds) before expiration
+    };
   }
 
   if (environment === 'test') {
@@ -51,6 +55,10 @@ module.exports = function(environment) {
   if (environment === 'production') {
     // here you can enable a production-specific feature
     ENV.apiURL = "https://jemapi.herokuapp.com"
+    ENV['ember-simple-auth-token'] = {
+      refreshAccessTokens: true,
+      refreshLeeway: 3000 // refresh 5 minutes (300 seconds) before expiration
+    };
   }
 
   return ENV;

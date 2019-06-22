@@ -6,15 +6,20 @@ import { get, set } from '@ember/object';
 export default Component.extend({
     spotify: service(),
     store: service(),
+    session: service(),
     source: null,
     spotifyRecord: null,
 
 
     init(){
         this._super(...arguments);
+
+        if(!get(this,'session.data.authenticated.user.spotifyToken')) return;
+
+        let accessToken = get(this, 'session.data.authenticated.user.spotifyToken');
+        set(this, 'accessToken', accessToken);
         this.trackName = get(this,'record.name');
         this.setSource(get(this,'record'));
-
     },
 
     getAlbum(record){
@@ -49,6 +54,9 @@ export default Component.extend({
     },
     setSource(){
         let record = get(this, 'record');
+
+
+        return;
         let track = get(this, 'spotify').getTrackSingle(record.name)
 
         track.then(track => {

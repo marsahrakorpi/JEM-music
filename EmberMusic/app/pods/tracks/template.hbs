@@ -7,7 +7,13 @@
 
 {{notification-container position="bottom-left"}}
 {{admin-actions}}
-{{tracks/models-table data=model}}
+
+{{tracks/models-table 
+    data=model 
+    limit=limit 
+    page=page
+    totalRecords = model.meta.total
+}}
 
 
 </div>

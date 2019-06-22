@@ -15,11 +15,6 @@ export default Service.extend({
 
     access_token: null,
 
-    init(){
-        this._super(...arguments);
-
-    },
-
     authenticate(){
 
         let accessToken = $.ajax({

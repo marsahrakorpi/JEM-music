@@ -8,11 +8,11 @@ export default Route.extend({
 
     init(){
         this._super(...arguments);
-        get(this, 'spotify').authenticate();
+        //get(this, 'spotify').authenticate();
     },
     beforeModel(){
 
-        get(this, 'api').loadAll();
+        //get(this, 'api').loadAll();
 
     }
 

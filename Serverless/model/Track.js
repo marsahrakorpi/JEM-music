@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate');
 const validator = require('validator');
 const Schema = mongoose.Schema;
 
@@ -7,15 +8,7 @@ const TrackSchema = new Schema({
         type: String,
         required: true
     },
-    _id: {
-        type: String,
-        required: true,
-        validate: {
-            validator(_id) {
-                return validator.isNumeric(_id);
-            }
-        }
-    },
+
     attributes: {
         name: {
             type: String,
@@ -24,24 +17,6 @@ const TrackSchema = new Schema({
         composer: {
             type: String,
             required: false
-        },
-        artist: {
-            type: String,
-            required: true,
-            validate: {
-                validator(artist) {
-                    return validator.isNumeric(artist);
-                }
-            }
-        },
-        album: {
-            type: String,
-            required: true,
-            validate: {
-                validator(album) {
-                    return validator.isNumeric(album);
-                }
-            }
         },
         milliseconds: {
             type: String,
@@ -70,8 +45,65 @@ const TrackSchema = new Schema({
                 }
             }
         },
+    },
+
+    relationships:{
+        album: {
+            data:{
+                id: {
+                    type: String,
+                    required: true,
+                    validate: {
+                        validator(_id) {
+                            return validator.isMongoId(_id);
+                        }
+                    }
+                },
+                type: {
+                    type: String,
+                    required: true
+                }
+            }
+
+        },
+        genre: {
+            data: {
+                id: {
+                    type: String,
+                    required: true,
+                    validate: {
+                        validator(_id) {
+                            return validator.isMongoId(_id);
+                        }
+                    }
+                },
+                type: {
+                    type: String,
+                    required: true
+                }
+            }
+        },
+        mediaType:{
+            data: {
+                id: {
+                    type: String,
+                    required: true,
+                    validate: {
+                        validator(_id) {
+                            return validator.isMongoId(_id);
+                        }
+                    }
+                },
+                type: {
+                    type: String,
+                    required: true
+                }
+            }
+        }
     }
 },
 );
+
+TrackSchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.models.Track || mongoose.model('Track', TrackSchema);  

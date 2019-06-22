@@ -1,20 +1,35 @@
 const http = require('http');
 const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate');
 const Promise = require('bluebird');
 const validator = require('validator');
+const qs = require('querystring');
 
+const QueryBuilder = require('./classes/QueryBuilder')
+
+/*MOODELS*/
 const ArtistsModel = require('./model/Artist');
 const AlbumsModel = require('./model/Album');
 const TracksModel = require('./model/Track');
+const GenresModel = require('./model/Genre');
+const MediaTypesModel = require('./model/MediaType');
 
-mongoose.Promise = Promise;
-var multi = false; //if need to do multiple back-to-back operations
+var MediaType = mongoose.model('MediaType') || mongoose.model('MediaType', MediaTypesModel);
+var Genre = mongoose.model('Genre') || mongoose.model('Genre', GenresModel);
 var Artist = mongoose.model('Artist') || mongoose.model('Artist', ArtistsModel);
 var Album = mongoose.model('Album') || mongoose.model('Album', AlbumsModel);
 var Track = mongoose.model('Track') || mongoose.model('Track', TracksModel);
+
+var multi = false; //if need to do multiple back-to-back operations
+mongoose.Promise = Promise;
+
+
+let defaultQueryLimit = 25;
+
 // admin:g/;7d:}~at-w`vD{
 // master:2PzcYcJxK5S4BpGV
-const mongoString = "mongodb://master:2PzcYcJxK5S4BpGV@ds125331.mlab.com:25331/serverless-ember"
+//const mongoString = "mongodb://master:2PzcYcJxK5S4BpGV@ds125331.mlab.com:25331/serverless-ember"
+const mongoString = "mongodb://mongoadmin:6jaRpVnx8YGz9vYn@ds127391.mlab.com:27391/items"
 const createErrorResponse = (statusCode, message) => ({
     statusCode: statusCode || 501,
     headers: { 'Content-Type': 'text/plain' },
@@ -33,6 +48,186 @@ function dbConnectAndExecute(dbUrl, fn) {
 }
 
 
+////GET WITH ID EXPORTS
+
+module.exports.artist = (event, context, callback) => {
+    if (!validator.isMongoId(event.pathParameters.id)) {
+      callback(null, createErrorResponse(400, 'Invalid id'));
+      return;
+    }
+  
+    dbConnectAndExecute(mongoString, () => (
+      Artist
+        .find({ _id: event.pathParameters.id })
+        .then(artist => callback(null, { statusCode: 200, body: JSON.stringify({data: artist[0]}) }))
+        .catch(err => callback(null, createErrorResponse(err.statusCode, err.message)))
+    ));
+};
+
+
+module.exports.mediaType = (event, context, callback) => {
+    if (!validator.isMongoId(event.pathParameters.id)) {
+      callback(null, createErrorResponse(400, 'Invalid id'));
+      return;
+    }
+  
+    dbConnectAndExecute(mongoString, () => (
+      MediaType
+        .find({ _id: event.pathParameters.id })
+        .then(mediaType => callback(null, { statusCode: 200, body: JSON.stringify({data: mediaType[0]}) }))
+        .catch(err => callback(null, createErrorResponse(err.statusCode, err.message)))
+    ));
+};
+
+
+module.exports.genre = (event, context, callback) => {
+    if (!validator.isMongoId(event.pathParameters.id)) {
+      callback(null, createErrorResponse(400, 'Invalid id'));
+      return;
+    }
+  
+    dbConnectAndExecute(mongoString, () => (
+      Genre
+        .find({ _id: event.pathParameters.id })
+        .then(genre => callback(null, { statusCode: 200, body: JSON.stringify({data: genre[0]}) }))
+        .catch(err => callback(null, createErrorResponse(err.statusCode, err.message)))
+    ));
+};
+
+module.exports.album = (event, context, callback) => {
+    if (!validator.isMongoId(event.pathParameters.id)) {
+      callback(null, createErrorResponse(400, 'Invalid id'));
+      return;
+    }
+  
+    dbConnectAndExecute(mongoString, () => (
+      Album
+        .find({ _id: event.pathParameters.id })
+        .then(album => callback(null, { statusCode: 200, body: JSON.stringify({data: album[0]}) }))
+        .catch(err => callback(null, createErrorResponse(err.statusCode, err.message)))
+    ));
+};
+
+
+// GET WITH ID EXPORTS END //////
+
+
+/// GET MASSES
+module.exports.getTracks = (event, context, callback) => {
+    let queryParams = event.queryStringParameters;
+
+    let options = {}; //offset, limit need to be in options, they are not mongo query params
+    options.limit = queryParams.limit ? parseInt(queryParams.limit) : defaultQueryLimit;
+    options.offset = queryParams.page ? queryParams.limit*(queryParams.page-1) : 0;
+
+    if (options.offset < 0) options.offset = 0;
+
+    delete(queryParams.limit);
+    delete(queryParams.page);
+    
+
+    console.log(options);
+    /*let query = new QueryBuilder(params);
+    query.buildQuery();*/
+
+    let tracks = new Promise((resolve, reject) => {
+        dbConnectAndExecute(mongoString, () => (
+            Track
+                .paginate({}, options)
+                .then(tracks => resolve(tracks) )
+                .catch(err => reject(err))
+        ));
+    })
+    tracks.then((tracks) => {
+        let data = tracks.docs;
+
+        let meta = {
+            limit: tracks.limit,
+            offset: tracks.offset,
+            total: tracks.total
+        }
+
+        callback(null, {statusCode : 200, body: JSON.stringify({data: data, meta: meta})});
+    }).catch(err => {
+        if(err.statusCode && err.message) callback(null, createErrorResponse(err.statusCode, err.message))
+        else callback(null, {statusCode : 501, body: JSON.stringify(err)});
+    })
+}
+
+
+
+
+
+module.exports.getAll = (event, context, callback) => {
+    multi = true;
+
+    let tracks = new Promise((resolve, reject) => {
+        dbConnectAndExecute(mongoString, () => (
+            Track
+                .find()
+                .then(tracks => resolve(tracks) )
+                .catch(err => reject(err))
+        ));
+    })
+
+
+    let albums = new Promise((resolve, reject) => {
+        dbConnectAndExecute(mongoString, () => (
+            Album
+                .find()
+                .then(albums => resolve(albums) )
+                .catch(err => reject(err))
+        ));
+    })
+
+    let artists = new Promise((resolve, reject) => {
+        dbConnectAndExecute(mongoString, () => (
+            Artist
+                .find()
+                .then(artists => resolve(artists))
+                .catch(err => reject(err))
+        ));
+    })
+
+    let genres = new Promise((resolve, reject) => {
+        dbConnectAndExecute(mongoString, () => (
+            Artist
+                .find()
+                .then(artists => resolve(artists))
+                .catch(err => reject(err))
+        ));
+    })
+
+    let mediaTypes = new Promise((resolve, reject) => {
+        dbConnectAndExecute(mongoString, () => (
+            Artist
+                .find()
+                .then(artists => resolve(artists))
+                .catch(err => reject(err))
+        ));
+    }) 
+
+    multi=false;
+    Promise.all([tracks, albums, artists, genres, mediaTypes])
+    .then((data) => {
+        data.forEach(dataArr => {
+            console.log(dataArr);
+            /*dataArr.data.forEach(d => {
+                if (d.type === 'artist') artistsArr.push(d);
+                if (d.type === 'album') albumsArr.push(d);
+                if (d.type === 'track') tracksArr.push(d);
+            })*/
+        })
+        callback(null, { statusCode: 200, body: JSON.stringify(data) })
+    })
+    .catch(err => {
+        if(err.statusCode && err.message) callback(null, createErrorResponse(err.statusCode, err.message))
+        else callback(null, {statusCode : 501, body: JSON.stringify(err)});
+    })
+}
+
+
+/*
 module.exports.getAll = (event, context, callback) => {
     //convertFromMySQL(event, context, callback);
 
@@ -169,7 +364,7 @@ module.exports.getAll = (event, context, callback) => {
         })
 
 }
-
+*/
 
 module.exports.editTrack = (event, context, callback) => {
     let data=JSON.parse(event.body).data;

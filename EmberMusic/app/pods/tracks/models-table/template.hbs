@@ -1,15 +1,10 @@
 
-{{#models-table class="mt-5" data=data columns=columns columnsAreUpdateable=true themeInstance=themeInstance pageSize=limit pageSizeValues=pageSizeValues as |mt|}}
+{{!--#models-table class="mt-5" data=data columns=columns columnsAreUpdateable=true themeInstance=themeInstance pageSize=limit pageSizeValues=pageSizeValues as |mt|}}
     {{#mt.table as |table|}}
 
         {{#table.header as |header|}}
-        {{#each header.groupedHeaders as |groupedHeader|}}
-            {{header.row-sorting }}
-            {{header.row-filtering filteringIgnoreCase=true}}
-            {{!--header.grouped-header groupedHeader=groupedHeader--}}
-        {{/each}}
-        {{header.row-sorting}}
-        {{header.row-filtering}}
+            {{header.row-sorting sort=(action "sort")}}
+            {{header.row-filtering}}
         {{/table.header}}
 
         {{#table.body as |body|}}
@@ -47,6 +42,32 @@
         {{footer.size-select}}
         {{footer.pagination-numeric pagesCount=totalPages goToPage=(action "goToPage")}}
 
-    {{/mt.footer--}}
+    {{/mt.footer}}
 
-{{/models-table}}
+{{/models-table--}}
+
+{{#models-table-server-paginated
+    filterQueryParameters=filterQueryParameters
+    data=data 
+    columns=columns 
+    columnsAreUpdateable=true 
+    themeInstance=themeInstance 
+    pageSize=limit 
+    pageSizeValues=pageSizeValues
+    as |mt|}}
+    {{#if mt.isLoading}}
+        <div class="overlay">
+            <p><i class="glyphicon glyphicon-refresh"></i></p>
+        </div>
+    {{/if}}
+    {{mt.table}}
+    {{mt.footer 
+        currentPageNumber=page 
+        firstIndex=firstIndex 
+        lastIndex=lastIndex 
+        recordsCount=totalRecords
+        useNumericPagination=true 
+        pagesCount=totalPages 
+        goToPage=(action "goToPage")
+    }}
+{{/models-table-server-paginated}}

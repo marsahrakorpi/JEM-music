@@ -13,7 +13,10 @@ export default Route.extend({
         order: {
             refreshModel: true
         },
-        page: {
+        sort: {
+            refreshModel: true
+        },
+        direction: {
             refreshModel: true
         }
     },

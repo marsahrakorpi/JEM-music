@@ -126,6 +126,14 @@ module.exports.album = (event, context, callback) => {
 
 /// GET MASSES
 module.exports.getTracks = (event, context, callback) => {
+    console.log("query for Tracks")
+
+    queryMongo(event, callback, context, Track).then(res => {
+        callback(null, {statusCode : 200, body: JSON.stringify(res)});
+    }).catch(err => {
+        callback(null, createErrorResponse(err.statusCode, err.message))
+    })
+    /*
     let queryParams = event.queryStringParameters;
 
     let options = {}; //offset, limit need to be in options, they are not mongo query params
@@ -139,8 +147,7 @@ module.exports.getTracks = (event, context, callback) => {
     
 
     console.log(options);
-    /*let query = new QueryBuilder(params);
-    query.buildQuery();*/
+
 
     let tracks = new Promise((resolve, reject) => {
         dbConnectAndExecute(mongoString, () => (
@@ -164,6 +171,7 @@ module.exports.getTracks = (event, context, callback) => {
         if(err.statusCode && err.message) callback(null, createErrorResponse(err.statusCode, err.message))
         else callback(null, {statusCode : 501, body: JSON.stringify(err)});
     })
+    */
 }
 
 module.exports.getAlbums = (event, context, callback) => {
@@ -179,13 +187,20 @@ function queryMongo(event, context, callback, model){
     let queryParams = event.queryStringParameters;
 
     let options = {}; //offset, limit need to be in options, they are not mongo query params
-    options.limit = queryParams.limit ? parseInt(queryParams.limit) : defaultQueryLimit;
-    options.offset = queryParams.page ? queryParams.limit*(queryParams.page-1) : 0;
 
+    options.limit = queryParams.limit ? parseInt(queryParams.limit) : defaultQueryLimit;
+
+    options.offset = queryParams.page ? queryParams.limit*(queryParams.page-1) : 0;
     if (options.offset < 0) options.offset = 0;
 
-    delete(queryParams.limit);
-    delete(queryParams.page);
+    if(queryParams.sort){
+        let sortBy = (queryParams.split("."))
+        let sortModel = sortBy[0];
+        if(queryParams.direction){
+            let direction = queryParams.direction.toString().toLowercase();
+        }
+        let sort = {}
+    }
     
     console.log(options);
     /*let query = new QueryBuilder(params);

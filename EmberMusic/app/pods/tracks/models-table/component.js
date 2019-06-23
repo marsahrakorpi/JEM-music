@@ -49,7 +49,12 @@ export default Component.extend({
         let lastIndex = (limit*page)
         return lastIndex;
     }),
-
+    filterQueryParameters: {
+        page: 'page',
+        limit: 'per_page',
+        sort: 'sort',
+        sortDirection: "direction"
+      },
     init(){
         this._super(...arguments);
         //{propertyName: "id", title:"#"},
@@ -64,6 +69,9 @@ export default Component.extend({
 
         goToPage(page){
             set(this, 'page', page)
+        },
+        sort(sort){
+            console.log(sort)
         }
     }
 

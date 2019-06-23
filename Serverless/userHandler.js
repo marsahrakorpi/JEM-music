@@ -40,10 +40,35 @@ function getSpotifyToken(){
 
 module.exports.login = (event, context, callback) => {
 
-  let data = qs.parse(decodeURIComponent(event.body));
+  //let data = qs.parse(decodeURIComponent(event.body));
+  let data = JSON.parse(event.body);
 
-  if(data.grant_type != "password") callback(null, createErrorResponse(401, "Invalid grant_type"))
-  if(!data.grant_type) callback(null, createErrorResponse(401, "Request is missing grant_type"))
+  let queryParams = event.queryStringParameters;
+
+  if(queryParams && queryParams.refresh && data.refresh_token){
+    loginWithRefreshToken(data.refresh_token, callback);
+  } else if(!queryParams && data){
+    loginWithCredentials(data, callback);
+  } else {
+    callback(null, createErrorResponse(401, "Invalid login method. Missing refresh token or user credentials."))
+  }
+
+
+};
+function loginWithRefreshToken(refreshToken, callback){
+  jwt.verify(refreshToken, 'superSecretSecret', function(err, decoded) {
+    if (err) {
+        callback(null, {statusCode: 401, body:JSON.stringify(err)});
+    } else {
+        let user = decoded;
+        delete(user.iat);
+        delete(user.exp);
+        login(user, callback);
+    }
+  });
+}
+function loginWithCredentials(data, callback) {
+  
   if(!data.username) callback(null, createErrorResponse(401, "Request is missing username"))
   if(!data.password) callback(null, createErrorResponse(401, "Requesti is missing password"))
 
@@ -61,61 +86,66 @@ module.exports.login = (event, context, callback) => {
         user = user.toObject(); //convert from mongo to json
         bcrypt.compare(data.password, user.password, (err, result) => {
           if(result) {
-
-            //create spotifyAuthToken for user
-            new Promise((resolve, reject) => {
-              var SPOTIFY_KEY="40e7cf37f399406796151cd92509230b";
-              var SPOTIFY_SECRET="2d11fc4ab38547739b14d8ce0b51a86e";
-            
-              var authOptions = {
-                  url: 'https://accounts.spotify.com/api/token',
-                  headers: {
-                      'Authorization': 'Basic ' + (new Buffer(SPOTIFY_KEY + ':' + SPOTIFY_SECRET).toString('base64'))
-                  },
-                  form: {
-                      grant_type: 'client_credentials'
-                  },
-                  json: true
-              };
-            
-              request.post(authOptions, function(error, response, body) {
-                if(error) reject(error)
-                if (!error && response.statusCode === 200) {
-                  // use the access token to access the Spotify Web API
-                  var token = body.access_token;
-                  resolve (token);
-                }
-              })
-            }).then((spotifyToken) => {
-
-              //create jwt
-              data.spotifyToken = spotifyToken;
-              user.spotifyToken = spotifyToken;
-              let token=jwt.sign(
-                data,
-                'superSecretSecret',
-                {expiresIn: '24h'}
-              )
-
-              delete(user.password); //do not return user's password :) 
-              console.log(user)
-              callback(null, { statusCode: 200, body: JSON.stringify({access_token:token, user:user}) });
-            }).catch(err => {
-              if(err.message && err.statusCode) callback(null, createErrorResponse(err.statusCode, err.message))
-              else callback(null, createErrorResponse(501, JSON.stringify(err)))
-            })
-
-
-
+            login(user, callback)
           }
           else callback(null, createErrorResponse(401, "Invalid username and/or password"))
         });
       })
       .catch(err => callback(null, createErrorResponse(err.statusCode, err.message)))
   ));
+}
 
-};
+function login(user, callback){
+  
+  //create spotifyAuthToken for user
+  new Promise((resolve, reject) => {
+    var SPOTIFY_KEY="40e7cf37f399406796151cd92509230b";
+    var SPOTIFY_SECRET="2d11fc4ab38547739b14d8ce0b51a86e";
+  
+    var authOptions = {
+        url: 'https://accounts.spotify.com/api/token',
+        headers: {
+            'Authorization': 'Basic ' + (new Buffer(SPOTIFY_KEY + ':' + SPOTIFY_SECRET).toString('base64'))
+        },
+        form: {
+            grant_type: 'client_credentials'
+        },
+        json: true
+    };
+  
+    request.post(authOptions, function(error, response, body) {
+      if(error) reject(error)
+      if (!error && response.statusCode === 200) {
+        // use the access token to access the Spotify Web API
+        var token = body.access_token;
+        resolve (token);
+      }
+    })
+  }).then((spotifyToken) => {
 
+    //create jwt
+    user.spotifyToken = spotifyToken;
+
+    delete(user.password); //do not return user's password :) 
+    delete(user.ip);
+    //3500s will sync with refreshing spotify token (3600s expire)
+    let token=jwt.sign(
+      user,
+      'superSecretSecret',
+      {expiresIn: '3500s'}
+    )
+
+    let refreshToken=jwt.sign(
+      user,
+      'superSecretSecret',
+      {expiresIn: '256h'}
+    )
+    callback(null, { statusCode: 200, body: JSON.stringify({access_token:token, refresh_token:refreshToken, user:user}) });
+  }).catch(err => {
+    if(err.message && err.statusCode) callback(null, createErrorResponse(err.statusCode, err.message))
+    else callback(null, createErrorResponse(501, JSON.stringify(err)))
+  })
+}
 module.exports.registerUser = (event, context, callback) => {
   console.log(event.body);
   const data = JSON.parse(event.body);

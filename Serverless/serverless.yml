@@ -118,13 +118,14 @@ functions:
           method: delete
           cors: true
 
-  spotifyAuthentication:
-    handler: spotifyHandler.authenticate
+  spotifySearch:
+    handler: spotifyHandler.search
     events:
       - http:
-          path: spotifyAuthentication
-          method: get
+          path: spotify/search
+          method: post
           cors: true
+          
 
   mysql:
     handler: mysqlHandler.mysql

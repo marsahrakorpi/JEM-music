@@ -1,42 +1,46 @@
-import Service from '@ember/service';
+import Service, { inject as service } from '@ember/service'; 
 import ENV from '../config/environment'
 import $ from 'jquery'
 import { run } from '@ember/runloop'
 import { get, set } from '@ember/object';
-import { reject } from 'rsvp';
 export default Service.extend({
-    /*https://developer.spotify.com/documentation/general/guides/authorization-guide/#client-credentials-flow*/
-/*
-*
-*Authorization	Required. 
-*Base 64 encoded string that contains the client ID and client secret key. The field must have the format: Authorization: Basic <base64 encoded client_id:client_secret>
-*
-*/
+    session: service(),
 
-    access_token: null,
-
-    authenticate(){
-
-        let accessToken = $.ajax({
-            url: ENV.apiURL+"/spotifyAuthentication",
-            method: "GET",
-        })
-  
-        set(this, 'access_token', accessToken);
-     
-    },
-    getNewAccessToken(){
-        return new Promise(resolve => {
-                $.ajax({
-                    url: ENV.apiURL+"/spotifyAuthentication",
-                    method: "GET",
-                }).then(res => {
+    getSingleTrack(track, album=null, artist=null){
+        /*Track, album, artist should all be strings*/
+        if(!track) throw new Error('Spotify getSingleTrack() did not receive the track parameter');
+        let access_token = get(this, 'session.data.authenticated.access_token');
+        if(!access_token){
+            get(this, 'session').invalidate();
+            window.location.reload();
+            return
+        }
+        return new Promise((resolve,reject) => {
+            $.ajax({
+                url: ENV.apiURL+'/spotify/search',
+                method: "POST",
+                headers: {
+                    "Authorization": "Bearer "+access_token
+                },
+                data: {
+                    type:"track",
+                    track:track,
+                    album:album,
+                    artist:artist
+                },
+                success: (res => {
                     resolve(res);
-                });
-            }
-        );
+                }),
+                error:(err => {
+                    reject(err);
+                })
+            })
+        });
+
     },
     getTrackSingle(searchTerm){
+        /**** DEPRECATED *****/
+        throw new Error('This method has been deprecated in favor of using serverless. Use getSingleTrack(track, album, artist) instead.')
         if(searchTerm === null || searchTerm === undefined || searchTerm === ""){
             return;
         }

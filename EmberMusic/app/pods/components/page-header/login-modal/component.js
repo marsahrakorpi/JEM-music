@@ -9,13 +9,15 @@ export default Component.extend({
     actions: {
         authenticate() {
             
-            let { identification, password } = this.getProperties('identification', 'password');
+            let credentials = this.getProperties('username', 'password');
 
-            get(this, 'session').authenticate('authenticator:jwt', identification, password).catch((reason) => {
+            get(this, 'session').authenticate('authenticator:jwt', credentials).catch((reason) => {
+                console.log(reason);
                 set(this, 'errorMessage', reason.error || reason);
-            }).then(()=>{
+            }).then((e)=>{
+                console.log(e)
                 set(this, 'showModal', false);
-                window.location.reload();
+                //window.location.reload();
             })
         },
         closeLoginModal() {

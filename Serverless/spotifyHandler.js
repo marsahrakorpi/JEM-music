@@ -1,30 +1,95 @@
-var SPOTIFY_KEY="40e7cf37f399406796151cd92509230b";
-var SPOTIFY_SECRET="2d11fc4ab38547739b14d8ce0b51a86e";
-var request = require('request');
+const request = require('request');
+const qs = require('querystring');
+const jwt = require('jsonwebtoken');
 
-module.exports.authenticate = (event, context, callback) => {
+function similar(a,b) {
+    //compares the similarity of two strings
+    var lengthA = a.length;
+    var lengthB = b.length;
+    var equivalency = 0;
+    var minLength = (a.length > b.length) ? b.length : a.length;    
+    var maxLength = (a.length < b.length) ? b.length : a.length;    
+    for(var i = 0; i < minLength; i++) {
+        if(a[i] == b[i]) {
+            equivalency++;
+        }
+    }
 
-    // your application requests authorization
-    var authOptions = {
-        url: 'https://accounts.spotify.com/api/token',
-        headers: {
-            'Authorization': 'Basic ' + (new Buffer(SPOTIFY_KEY + ':' + SPOTIFY_SECRET).toString('base64'))
-        },
-        form: {
-            grant_type: 'client_credentials'
-        },
-        json: true
-    };
-    
-    request.post(authOptions, function(error, response, body) {
-        if(error) callback(null, { statusCode: 501, body: "Spotify Authentication failed" })
-        if (!error && response.statusCode === 200) {
-    
-        // use the access token to access the Spotify Web API
-        var token = body.access_token;
-        callback(null, { statusCode: 200, body: token })
+    var weight = equivalency / maxLength;
+    return weight
+}
+
+module.exports.search = (event, context, callback) => {
+    let token = event.headers.Authorization.toString().substr(7);
+    let decodedJWT = "";
+    jwt.verify(token, 'superSecretSecret', function(err, decoded) {
+        if (err) {
+            callback(null, {statusCode: 401, body:"Invalid access token"});
+        } else {
+            decodedJWT = decoded;
+            if(!decodedJWT.spotifyToken) callback(null, {statusCode: 501, body:"No Spotify Access Token Found For User"});
         }
     });
+    let data = qs.parse(decodeURIComponent(event.body));
 
+    let track = data.track;
+    let album = data.album;
+    let artist = data.artist;
+
+    if(!data.type) callback(null, {statusCode: 400, body:"Request had no type parameter."})
+    let type = data.type;
+    let q = "";
+
+    if(type === "track") q = data.track;
+    else if(type === "album") q = data.album;
+    else if(type === "artist") q = data.artist;
+    else callback(null, {statusCode: 400, body:"Request had an incorrect type parameter. Accepted types are: track, album, artist"})
+
+    let queryString = "?q="+q+"&type="+type+"&offset=0&limit=5";
+   // console.log(queryString);
+
+    let spotifyToken = decodedJWT.spotifyToken;
+
+
+    searchSpotify(queryString, spotifyToken, callback).then(res => {
+        let items = "";
+        res = JSON.parse(res);
+
+        if(type === "track") items = res.tracks;
+        else if (type === "album") items = res.albums;
+        else if (type === "artist") items = res.artists;
+        if(items === "") callback(null, {statusCode: 501, body:"Searching Spotify did not return items"})
+        let itemsArr = items.items;
+
+        let bestMatch = "";
+        let bestSimilarity = 0;
+        itemsArr.forEach(item => {
+            //Set the types here
+            if(album && item.album){
+                //console.log("searched for: "+album+" Found: "+item.album.name);
+                let similarity = similar(album,item.album.name);
+                if(similarity>bestSimilarity && similarity>0.25){ 
+                    bestSimilarity = similarity;
+                    bestMatch = item.preview_url;
+                }
+            }
+        })
+       // console.log("searched for: "+album+" Found: "+bestMatch+" With a similarity of: "+bestSimilarity);
+        callback(null, {statusCode: 200, body: JSON.stringify({url: bestMatch})});
+    });
 
 }
+
+function searchSpotify(queryString, spotifyToken) {
+    return new Promise(resolve => {
+        request.get('https://api.spotify.com/v1/search'+queryString, {
+            auth: {
+                'bearer': spotifyToken
+            }
+        }, function(error, response, body) {
+            resolve(body);
+        });
+    })
+
+}
+

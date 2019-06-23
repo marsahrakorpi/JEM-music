@@ -36,7 +36,13 @@ module.exports = function(environment) {
     // ENV.APP.LOG_VIEW_LOOKUPS = true;
     ENV['ember-simple-auth-token'] = {
       refreshAccessTokens: true,
-      refreshLeeway: 3000 // refresh 5 minutes (300 seconds) before expiration
+      refreshLeeway: 60, // refresh 5 minutes (300 seconds) before expiration
+      authorizationHeaderName: 'Authorization', // Header name added to each API request
+      authorizationPrefix: 'Bearer ', // Prefix added to each API request
+      serverTokenEndpoint: ENV.apiURL+'/login', // Server endpoint to send authenticate request
+      serverTokenRefreshEndpoint: ENV.apiURL+'/login?refresh=true',
+      tokenPropertyName: 'access_token', // Key in server response that contains the access token
+
     };
   }
 
@@ -50,6 +56,10 @@ module.exports = function(environment) {
 
     ENV.APP.rootElement = '#ember-testing';
     ENV.APP.autoboot = false;
+    ENV['ember-simple-auth-token'] = {
+      refreshAccessTokens: false,
+      tokenExpirationInvalidateSession: false,
+    };
   }
 
   if (environment === 'production') {
@@ -57,7 +67,12 @@ module.exports = function(environment) {
     ENV.apiURL = "https://jemapi.herokuapp.com"
     ENV['ember-simple-auth-token'] = {
       refreshAccessTokens: true,
-      refreshLeeway: 3000 // refresh 5 minutes (300 seconds) before expiration
+      refreshLeeway: 60, // refresh 5 minutes (300 seconds) before expiration
+      authorizationHeaderName: 'Authorization', // Header name added to each API request
+      authorizationPrefix: 'Bearer ', // Prefix added to each API request
+      serverTokenEndpoint: ENV.apiURL+'/login', // Server endpoint to send authenticate request
+      tokenPropertyName: 'access_token', // Key in server response that contains the access token
+
     };
   }
 

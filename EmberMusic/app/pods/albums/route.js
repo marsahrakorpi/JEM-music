@@ -4,10 +4,7 @@ import { get } from '@ember/object';
 export default Route.extend({
     api: service('api'),
 
-
-    model(){
-
-        return get(this, 'store').peekAll('album');
-
+    model(params){
+        return get(this, 'store').query('album', params);
     }
 });

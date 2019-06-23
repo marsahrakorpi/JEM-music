@@ -8,11 +8,29 @@ export default Component.extend({
     session: service(),
     themeInstance: SemanticUiTheme.extend({table: 'ui sortable selectable table'}).create(),
     loading: false,
-    columns: null,
     pageSizeValues: null,
     data: null,
 
     spotify:true,
+
+    columns: computed('session.isAuthenticated', function(){
+        let columns = [
+            {propertyName: 'name', title:"Name"},
+            {propertyName: 'album.title', title:"Album"},
+            {propertyName: 'album.artist.name', title:"Artist", "sortDirection": "asc", "sortPrecedence": 1},
+            {propertyName: 'length', title:"Length", value: length},
+            {propertyName: 'genre.name', title: "Genre"},
+            {propertyName: 'unitPrice', title:"Price"},
+        ];
+
+        if(get(this, 'session.isAuthenticated')){
+            columns.push({component: 'music-preview', title:"Preview"})
+            columns.push({component: 'tracks/edit-track-row', title:"Edit"})
+            columns.push({component: 'tracks/delete-track-row', title:"Remove"})
+        }
+        console.log(columns);
+        return columns;
+    }),
 
     totalPages: computed('totalRecords', 'limit', function(){
         let total = get(this,'totalRecords');
@@ -36,20 +54,7 @@ export default Component.extend({
     init(){
         this._super(...arguments);
         //{propertyName: "id", title:"#"},
-        this.columns = [
-            {propertyName: 'name', title:"Name"},
-            {propertyName: 'album.title', title:"Album"},
-            {propertyName: 'album.artist.name', title:"Artist", "sortDirection": "asc", "sortPrecedence": 1},
-            {propertyName: 'length', title:"Length", value: length},
-            {propertyName: 'genre.name', title: "Genre"},
-            {propertyName: 'unitPrice', title:"Price"},
-        ];
 
-        if(get(this, 'session').isAuthenticated){
-            get(this, 'columns').push({component: 'music-preview', title:"Preview"})
-            get(this, 'columns').push({component: 'tracks/edit-track-row', title:"Edit"})
-            get(this, 'columns').push({component: 'tracks/delete-track-row', title:"Remove"})
-        }
         this.pageSizeValues = [10, 25, 50, 100, 200];
     },
 

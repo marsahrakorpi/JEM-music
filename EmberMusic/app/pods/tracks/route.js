@@ -19,9 +19,7 @@ export default Route.extend({
     },
 
     model(params){
-        console.log(params);
-
-        return get(this, 'store').query('track', params, {include: 'artist'});
+        return get(this, 'store').query('track', params);
     },
 
     actions: {

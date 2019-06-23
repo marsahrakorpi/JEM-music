@@ -1,5 +1,5 @@
 
-{{#models-table class="mt-5" data=data columns=(await columns) themeInstance=themeInstance pageSize=limit pageSizeValues=pageSizeValues as |mt|}}
+{{#models-table class="mt-5" data=data columns=columns columnsAreUpdateable=true themeInstance=themeInstance pageSize=limit pageSizeValues=pageSizeValues as |mt|}}
     {{#mt.table as |table|}}
 
         {{#table.header as |header|}}

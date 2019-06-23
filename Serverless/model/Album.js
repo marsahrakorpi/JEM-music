@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate');
 const validator = require('validator');
 const Schema = mongoose.Schema;
 
@@ -41,5 +42,5 @@ const AlbumSchema = new Schema({
 
 },
 );
-
+AlbumSchema.plugin(mongoosePaginate);
 module.exports = mongoose.models.Album || mongoose.model('Album', AlbumSchema);  

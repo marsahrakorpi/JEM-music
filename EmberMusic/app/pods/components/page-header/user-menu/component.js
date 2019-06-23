@@ -16,7 +16,6 @@ export default Component.extend({
         
         logout() {
             get(this, 'session').invalidate();
-            window.location.reload();
         },
         showUserActions(){
             set(this, 'showUserActions', true);

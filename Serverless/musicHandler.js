@@ -1,6 +1,5 @@
 const http = require('http');
 const mongoose = require('mongoose');
-const mongoosePaginate = require('mongoose-paginate');
 const Promise = require('bluebird');
 const validator = require('validator');
 const qs = require('querystring');
@@ -154,6 +153,46 @@ module.exports.getTracks = (event, context, callback) => {
     })
 }
 
+module.exports.getAlbums = (event, context, callback) => {
+    let queryParams = event.queryStringParameters;
+
+    let options = {}; //offset, limit need to be in options, they are not mongo query params
+    options.limit = queryParams.limit ? parseInt(queryParams.limit) : defaultQueryLimit;
+    options.offset = queryParams.page ? queryParams.limit*(queryParams.page-1) : 0;
+
+    if (options.offset < 0) options.offset = 0;
+
+    delete(queryParams.limit);
+    delete(queryParams.page);
+    
+
+    console.log(options);
+    /*let query = new QueryBuilder(params);
+    query.buildQuery();*/
+
+    let albums = new Promise((resolve, reject) => {
+        dbConnectAndExecute(mongoString, () => (
+            Album
+                .paginate({}, options)
+                .then(albums => resolve(albums) )
+                .catch(err => reject(err))
+        ));
+    })
+    albums.then((albums) => {
+        let data = albums.docs;
+
+        let meta = {
+            limit: albums.limit,
+            offset: albums.offset,
+            total: albums.total
+        }
+
+        callback(null, {statusCode : 200, body: JSON.stringify({data: data, meta: meta})});
+    }).catch(err => {
+        if(err.statusCode && err.message) callback(null, createErrorResponse(err.statusCode, err.message))
+        else callback(null, {statusCode : 501, body: JSON.stringify(err)});
+    })
+}
 
 
 

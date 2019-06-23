@@ -61,7 +61,14 @@ functions:
           path: tracks
           method: get
           cors: true
-
+          
+  albums:
+    handler: musicHandler.getAlbums
+    events:
+      - http:
+          path: albums
+          method: get
+          cors: true
 
 
   album:

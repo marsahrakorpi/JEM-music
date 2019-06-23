@@ -20,7 +20,6 @@
                             {{body.row record=record index=index}}
                         {{#if (exists-in body.expandedItems record)}}
                             <h1>Tracks in album: {{record.title}} by {{record.artist.name}} </h1>
-                            {{log record}}
                             {{body.row-expand record=record.tracks index=index}}
                         {{/if}}
                     {{/each}}
@@ -33,16 +32,15 @@
             {{/if}}
         {{/table.body}}
 
-    {{#table.footer as |footer|}}
-        {{footer.pagination-numeric}}
-    {{/table.footer}}
-
     {{/mt.table}}
 
-    {{#mt.footer as |footer|}}
-        {{footer.pagination-simple}}
-        {{footer.size-select pageSize=25 }}
-
-    {{/mt.footer}}
-
+    {{mt.footer 
+        currentPageNumber=page 
+        firstIndex=firstIndex 
+        lastIndex=lastIndex 
+        recordsCount=totalRecords
+        useNumericPagination=true 
+        pagesCount=totalPages 
+        goToPage=(action "goToPage")
+    }}
 {{/models-table}}

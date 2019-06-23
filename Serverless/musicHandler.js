@@ -48,6 +48,19 @@ function dbConnectAndExecute(dbUrl, fn) {
 
 
 ////GET WITH ID EXPORTS
+module.exports.track = (event, context, callback) => {
+    if (!validator.isMongoId(event.pathParameters.id)) {
+      callback(null, createErrorResponse(400, 'Invalid id'));
+      return;
+    }
+  
+    dbConnectAndExecute(mongoString, () => (
+      Track
+        .find({ _id: event.pathParameters.id })
+        .then(track => callback(null, { statusCode: 200, body: JSON.stringify({data: track[0]}) }))
+        .catch(err => callback(null, createErrorResponse(err.statusCode, err.message)))
+    ));
+};
 
 module.exports.artist = (event, context, callback) => {
     if (!validator.isMongoId(event.pathParameters.id)) {
@@ -154,6 +167,15 @@ module.exports.getTracks = (event, context, callback) => {
 }
 
 module.exports.getAlbums = (event, context, callback) => {
+    console.log("query for albums")
+    queryMongo(event, callback, context, Album).then(res => {
+        callback(null, {statusCode : 200, body: JSON.stringify(res)});
+    }).catch(err => {
+        callback(null, createErrorResponse(err.statusCode, err.message))
+    })
+}
+
+function queryMongo(event, context, callback, model){
     let queryParams = event.queryStringParameters;
 
     let options = {}; //offset, limit need to be in options, they are not mongo query params
@@ -165,36 +187,35 @@ module.exports.getAlbums = (event, context, callback) => {
     delete(queryParams.limit);
     delete(queryParams.page);
     
-
     console.log(options);
     /*let query = new QueryBuilder(params);
     query.buildQuery();*/
 
-    let albums = new Promise((resolve, reject) => {
-        dbConnectAndExecute(mongoString, () => (
-            Album
-                .paginate({}, options)
-                .then(albums => resolve(albums) )
-                .catch(err => reject(err))
-        ));
+    return new Promise((resolve, reject) => {
+        new Promise((resolve, reject) => {
+            dbConnectAndExecute(mongoString, () => (
+                model
+                    .paginate({}, options)
+                    .then(items => resolve(items) )
+                    .catch(err => reject(err))
+            ));
+        }).then((items) => {
+            let data = items.docs;
+    
+            let meta = {
+                limit: items.limit,
+                offset: items.offset,
+                total: items.total
+            }
+    
+            resolve({data: data, meta: meta});
+        }).catch(err => {
+            reject(err);
+        })
     })
-    albums.then((albums) => {
-        let data = albums.docs;
 
-        let meta = {
-            limit: albums.limit,
-            offset: albums.offset,
-            total: albums.total
-        }
 
-        callback(null, {statusCode : 200, body: JSON.stringify({data: data, meta: meta})});
-    }).catch(err => {
-        if(err.statusCode && err.message) callback(null, createErrorResponse(err.statusCode, err.message))
-        else callback(null, {statusCode : 501, body: JSON.stringify(err)});
-    })
 }
-
-
 
 
 module.exports.getAll = (event, context, callback) => {

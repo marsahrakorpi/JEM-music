@@ -61,7 +61,7 @@ functions:
           path: tracks
           method: get
           cors: true
-          
+
   albums:
     handler: musicHandler.getAlbums
     events:
@@ -70,6 +70,13 @@ functions:
           method: get
           cors: true
 
+  track:
+    handler: musicHandler.track
+    events:
+      - http:
+          path: tracks/{id}
+          method: get
+          cors: true
 
   album:
     handler: musicHandler.album
@@ -78,6 +85,7 @@ functions:
           path: albums/{id}
           method: get
           cors: true
+
   artist:
     handler: musicHandler.artist
     events:

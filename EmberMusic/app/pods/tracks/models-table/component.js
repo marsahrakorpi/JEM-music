@@ -24,11 +24,10 @@ export default Component.extend({
         ];
 
         if(get(this, 'session.isAuthenticated')){
-            columns.push({component: 'music-preview', title:"Preview"})
+            columns.push({component: 'tracks/music-preview', title:"Preview"})
             columns.push({component: 'tracks/edit-track-row', title:"Edit"})
             columns.push({component: 'tracks/delete-track-row', title:"Remove"})
         }
-        console.log(columns);
         return columns;
     }),
 

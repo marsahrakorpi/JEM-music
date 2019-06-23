@@ -56,9 +56,82 @@ module.exports.mysql = (event, context, callback) => {
     //convertAlbums(callback);
     //convertGenres(callback);
     //convertMediaTypes(callback);
+    //convertTracks(callback);
+    
+    multi=true;
+    let albums = new Promise(resolve => {
+        dbConnectAndExecute(mongoString, () => (
+            Album
+                .find()
+                .then(albums => resolve(albums))
+                .catch(err => callback(null, createErrorResponse(err.statusCode, err.message)))
+        ));
+    })  
 
-    convertTracks(callback);
-    //callback(null, { statusCode: 501, body: "ok" })
+    let tracks = new Promise(resolve => {
+        dbConnectAndExecute(mongoString, () => (
+            Track
+                .find()
+                .then(tracks => resolve(tracks))
+                .catch(err => callback(null, createErrorResponse(err.statusCode, err.message)))
+        ));
+    })
+    multi=false;
+    Promise.all([tracks, albums])
+    .then(data => {
+        let tracks = data[0];
+        let albums = data[1];
+        let itemArr = [];
+
+        let mappedAlbums = albums.map(album => {
+            
+            let filteredTracks = tracks.filter(track => track.relationships.album.data.id == album.id)
+            //if(album.id === "5d0f736ff0acd35bf41f8a9a") console.log(filteredTracks);
+            let relationshipTracks = filteredTracks.map(f => {
+                return {type:"tracks", id:f.id}
+            })
+            //if(album.id === "5d0f736ff0acd35bf41f8a9a") console.log(relationshipTracks);
+            album=album.toObject()
+
+            album.relationships.tracks = {data: relationshipTracks};
+            //if(album.id === "5d0f736ff0acd35bf41f8a9a") console.log(album);
+            
+            let albumModel = new Album(album);
+
+            if (albumModel.validateSync()) {
+                callback(null, createErrorResponse(400, 'Incorrect artist data:' + album));
+            } else {
+                return albumModel;
+            }
+        })
+
+        let item = mappedAlbums.find(a => a.id === "5d0f736ff0acd35bf41f8a9a");
+        let itemb = mappedAlbums.find(a => a.id === "5d0f736ff0acd35bf41f8a9b");
+        let items = [];
+        multi=true;
+        new Promise(resolve => {
+            mappedAlbums.forEach(album => {
+            
+                let id = album._id;
+                console.log("Updating album: ", id);
+                delete(album._id);
+                console.log(album);
+                dbConnectAndExecute(mongoString, () => (
+                    Album
+                        .findByIdAndUpdate(id, album)
+                        .then((g) => console.log("done"))
+                        .catch(err => callback(null, createErrorResponse(err.statusCode, err.message)))
+                ));
+                         
+            })
+            resolve()
+        }).then(callback(null, {statusCode:200, body:"ok"}))
+
+
+    })
+   
+
+
 }
 
 function convertMediaTypes(callback){
@@ -294,16 +367,24 @@ function convertAlbums(callback){
     let artistsArr = [];
     let albumsArr = [];
     //get artists from monkko deebee
-
+    multi=true;
     let artists = new Promise(resolve => {
         dbConnectAndExecute(mongoString, () => (
             Artist
                 .find()
-                .then(artists => {console.log(artists); artistsArr = artists; resolve(artistsArr)})
+                .then(artists => {artistsArr = artists; resolve(artistsArr)})
+                .catch(err => callback(null, createErrorResponse(err.statusCode, err.message)))
+        ));
+    })  
+
+    let tracks = new Promise(resolve => {
+        dbConnectAndExecute(mongoString, () => (
+            Track
+                .find()
+                .then(tracks => {tracksArr = tracks; resolve(tracksArr)})
                 .catch(err => callback(null, createErrorResponse(err.statusCode, err.message)))
         ));
     })
-
        
     let albums = new Promise(resolve => {
         //get albums from mysql
@@ -328,13 +409,17 @@ function convertAlbums(callback){
         })
     })
 
-    Promise.all(artists, albums)
+    multi=false;
+    Promise.all([artists, tracks, albums])
     .then(() => {
 
         let itemArr = [];
 
         albumsArr.forEach(album => {
+
             let artist = artistsArr.find(artist => artist.attributes.artistId === album.ArtistId.toString());
+            //let tracks = tracksArr.filter(track => track.relationships.album.data.id === album.AlbumId);
+            //console.log(tracks);
             let albumArtist = artist._id;
 
             let albumModel = new Album({
@@ -352,15 +437,15 @@ function convertAlbums(callback){
                     }
                 }
             });
-
             if (albumModel.validateSync()) {
                 callback(null, createErrorResponse(400, 'Incorrect artist data:' + album));
             } else {
                 itemArr.push(albumModel);
             }
         })
-        multi=true;
+        multi=false;
         new Promise(resolve => {
+            console.log("insert into mongo")
             dbConnectAndExecute(mongoString, () => (
                 Album
                     .insertMany(itemArr, { ordered: false })

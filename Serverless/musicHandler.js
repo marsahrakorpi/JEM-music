@@ -194,10 +194,22 @@ function queryMongo(event, context, callback, model){
     if (options.offset < 0) options.offset = 0;
 
     if(queryParams.sort){
-        let sortBy = (queryParams.split("."))
-        let sortModel = sortBy[0];
+        let sortBy = queryParams.sort.split(".")
+
+        let mongoModel = model; // the /get routes pass this direct as their own
+        //if we have a sort, we actually need to query using that model
+        if (sortBy.length>1) {
+            if(sortBy[sortBy.length-2]==="artist"){
+                
+            }
+            if(sortBy[sortBy.length-2]==="album"){
+
+            }
+        }  
+
+
         if(queryParams.direction){
-            let direction = queryParams.direction.toString().toLowercase();
+            let direction = queryParams.direction.toString().toLowerCase();
         }
         let sort = {}
     }
@@ -205,6 +217,9 @@ function queryMongo(event, context, callback, model){
     console.log(options);
     /*let query = new QueryBuilder(params);
     query.buildQuery();*/
+
+    options.limit=2;
+    options.populate="album";
 
     return new Promise((resolve, reject) => {
         new Promise((resolve, reject) => {
@@ -222,7 +237,24 @@ function queryMongo(event, context, callback, model){
                 offset: items.offset,
                 total: items.total
             }
-    
+
+            let sets = [];
+            let albums = [];
+            let tracks = [];
+            let artists = [];
+            let mediaTypes = [];
+            let genres = [];
+            let relationships = data.map(data => {
+                if(data.relationships){
+                    let obj = data.relationships.toObject();
+                    Object.keys(obj).forEach((k) => {
+                        let id = obj[k].data.id
+                        let type = obj[k].data.type;
+                        console.log(this[type])
+                    });
+                }
+            })
+            //console.log(albums)
             resolve({data: data, meta: meta});
         }).catch(err => {
             reject(err);
